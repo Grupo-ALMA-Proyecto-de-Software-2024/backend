@@ -1,5 +1,8 @@
 .PHONY: format quality-check
 
+run:
+	poetry run python manage.py runserver
+
 format:
 	poetry run black .
 
