@@ -6,3 +6,6 @@ format:
 quality-check:
 	poetry run flake8 .
 	poetry run black --check .
+
+test:
+	poetry run python manage.py test
