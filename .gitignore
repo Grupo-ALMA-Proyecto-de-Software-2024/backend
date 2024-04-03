@@ -30,3 +30,6 @@ poetry.lock
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+
+# Editor directories
+.vscode/
