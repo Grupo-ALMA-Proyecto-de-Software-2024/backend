@@ -1,0 +1,47 @@
+[tool.poetry]
+name = "alma-backend"
+version = "0.1.0"
+description = "Backend de repositorio de datos de ALMA"
+authors = ["Pablo <112183476+pabloscopeo@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.0.3"
+djangorestframework = "^3.15.1"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.0.0"
+black = "^24.3.0"
+flake8-pyproject = "^1.2.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+    .git
+    | .venv
+    | build
+    | dist
+)/
+'''
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = [
+    "E203",
+    "W503",
+]
+exclude = [
+    ".git",
+    ".venv",
+    "build",
+    "dist",
+]
