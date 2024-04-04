@@ -1,4 +1,4 @@
-.PHONY: format quality-check
+.PHONY: run format quality-check test
 
 run:
 	poetry run python manage.py runserver
