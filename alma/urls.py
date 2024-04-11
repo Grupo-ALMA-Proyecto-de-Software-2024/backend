@@ -23,5 +23,5 @@ from api import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
-    path("hello/", views.HelloWorldView.as_view(), name="hello-world"),
+    path("", views.HelloWorldView.as_view(), name="hello-world"),
 ]
