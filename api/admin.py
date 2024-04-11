@@ -9,6 +9,7 @@ class CarouselImageAdmin(admin.ModelAdmin):
     search_fields = ("title", "description")
     list_filter = ("creation_date",)
     readonly_fields = ("image_tag",)
+    fields = ("image_tag", "image", "title", "description")
 
     def image_tag(self, obj):
         if obj.image:
