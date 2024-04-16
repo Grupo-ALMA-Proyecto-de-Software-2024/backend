@@ -18,3 +18,7 @@ class CarouselImageView(APIView):
         carousel_images = CarouselImage.objects.all()
         serializer = CarouselImageSerializer(carousel_images, many=True)
         return Response(serializer.data)
+
+    @classmethod
+    def get_serializer_class(cls):
+        return CarouselImageSerializer
