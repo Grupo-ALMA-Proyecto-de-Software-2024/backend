@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
 
-from .models import CarouselImage
+from .models import CarouselImage, Region, Disk, Band, Molecule
 
 
 class CarouselImageAdmin(admin.ModelAdmin):
@@ -20,3 +20,7 @@ class CarouselImageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CarouselImage, CarouselImageAdmin)
+admin.site.register(Region)
+admin.site.register(Disk)
+admin.site.register(Band)
+admin.site.register(Molecule)
