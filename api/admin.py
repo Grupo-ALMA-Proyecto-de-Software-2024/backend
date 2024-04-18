@@ -1,8 +1,6 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
 
-from .models import CarouselImage, Region, Disk, Band, Molecule
-
 
 class CarouselImageAdmin(admin.ModelAdmin):
     list_display = ("title", "creation_date")
@@ -17,10 +15,3 @@ class CarouselImageAdmin(admin.ModelAdmin):
         return "No Image"
 
     image_tag.short_description = "Image Preview"
-
-
-admin.site.register(CarouselImage, CarouselImageAdmin)
-admin.site.register(Region)
-admin.site.register(Disk)
-admin.site.register(Band)
-admin.site.register(Molecule)
