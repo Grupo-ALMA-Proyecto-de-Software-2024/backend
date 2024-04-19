@@ -24,7 +24,9 @@ class AdminSiteTest(TestCase):
 
         result = find_app(apps, app_name)
 
-        self.assertEqual(result, {"name": "API", "models": [{"name": "Model1"}, {"name": "Model2"}]})
+        self.assertEqual(
+            result, {"name": "API", "models": [{"name": "Model1"}, {"name": "Model2"}]}
+        )
 
     def test_update_apps_layout(self):
         apps = {
