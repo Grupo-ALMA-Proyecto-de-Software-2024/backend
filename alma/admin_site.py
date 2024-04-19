@@ -54,7 +54,9 @@ def update_apps_layout(
         app_to_update = find_app(apps, app_backend_name)
         if app_to_update:
             app_to_update["name"] = app_name_to_display
-            app_to_update["models"].sort(key=lambda model: models.index(model["name"]))
+            app_to_update["models"].sort(
+                key=lambda model: models.index(model["name"]),
+            )
 
     return apps
 

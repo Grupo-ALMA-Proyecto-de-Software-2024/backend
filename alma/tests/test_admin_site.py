@@ -1,16 +1,59 @@
 from django.test import TestCase
-from alma.admin_site import sort_models_in_app_list
+from alma.admin_site import find_app, update_apps_layout
 
 
-class SortModelsInAppListTest(TestCase):
-    def test_sort_models_in_app_list(self):
-        apps = [
-            {"name": "API", "models": [{"object_name": "Model2"}, {"object_name": "Model1"}]},
-            {"name": "Other", "models": [{"object_name": "ModelA"}, {"object_name": "ModelB"}]},
-        ]
+class AdminSiteTest(TestCase):
+    def test_find_app(self):
+        apps = {
+            "API": {
+                "name": "API",
+                "models": [
+                    {"name": "Model1"},
+                    {"name": "Model2"},
+                ],
+            },
+            "Other": {
+                "name": "Other",
+                "models": [
+                    {"name": "ModelA"},
+                    {"name": "ModelB"},
+                ],
+            },
+        }
         app_name = "API"
-        model_order = ["Model1", "Model2"]
 
-        result = sort_models_in_app_list(apps, app_name, model_order)
+        result = find_app(apps, app_name)
 
-        self.assertEqual(result[0]["models"], [{"object_name": "Model1"}, {"object_name": "Model2"}])
+        self.assertEqual(result, {"name": "API", "models": [{"name": "Model1"}, {"name": "Model2"}]})
+
+    def test_update_apps_layout(self):
+        apps = {
+            "API": {
+                "name": "API",
+                "models": [
+                    {"name": "Model1"},
+                    {"name": "Model2"},
+                ],
+            },
+            "Other": {
+                "name": "Other",
+                "models": [
+                    {"name": "ModelA"},
+                    {"name": "ModelB"},
+                ],
+            },
+        }
+        template = [
+            {
+                "app_backend_name": "API",
+                "name_to_display": "API-DISPLAY",
+                "models": ["Model2", "Model1"],
+            }
+        ]
+
+        result = update_apps_layout(apps, template)
+
+        self.assertEqual(
+            result["API"]["models"],
+            [{"name": "Model2"}, {"name": "Model1"}],
+        )
