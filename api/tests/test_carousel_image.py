@@ -6,7 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from .models import CarouselImage
+from ..models import CarouselImage
 
 
 class CarouselImageViewTest(TestCase):
