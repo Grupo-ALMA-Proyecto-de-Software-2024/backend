@@ -11,6 +11,7 @@ MODELS_TEMPLATE = [
             "Disks",
             "Bands",
             "Molecules",
+            "Data",
             "Carousel images",
         ],
     },

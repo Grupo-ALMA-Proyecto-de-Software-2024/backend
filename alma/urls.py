@@ -49,5 +49,7 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
+    # easy access to swagger ui
+    path("docs/", SpectacularSwaggerView.as_view(), name="swagger-ui"),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
