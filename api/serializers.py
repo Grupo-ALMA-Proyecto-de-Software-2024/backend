@@ -13,81 +13,39 @@ class CarouselImageSerializer(serializers.ModelSerializer):
         fields = ["image", "title", "description", "creation_date"]
 
 
-class RegionSerializer(serializers.ModelSerializer):
+class DataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Region
-        fields = ["name"]
-
-
-class DiskSerializer(serializers.ModelSerializer):
-    region = serializers.StringRelatedField()
-
-    class Meta:
-        model = models.Disk
-        fields = ["name", "region"]
-
-
-class BandSerializer(serializers.ModelSerializer):
-    disk = serializers.StringRelatedField()
-    region = serializers.StringRelatedField()
-
-    class Meta:
-        model = models.Band
-        fields = ["name", "disk", "region"]
-
-    def get_disk(self, obj):
-        return obj.disk.name
-
-    def get_region(self, obj):
-        return obj.disk.region.name
+        model = models.Data
+        fields = ["name", "creation_date", "file", "is_viewable"]
 
 
 class MoleculeSerializer(serializers.ModelSerializer):
-    band = serializers.StringRelatedField()
-    disk = serializers.StringRelatedField()
-    region = serializers.StringRelatedField()
+    data = DataSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Molecule
-        fields = ["name", "band", "disk", "region"]
-
-    def get_band(self, obj):
-        return obj.band.name
-
-    def get_disk(self, obj):
-        return obj.band.disk.name
-
-    def get_region(self, obj):
-        return obj.band.disk.region.name
+        fields = ["name", "data"]
 
 
-class DataSerializer(serializers.ModelSerializer):
-    molecule = serializers.SerializerMethodField()
-    band = serializers.SerializerMethodField()
-    disk = serializers.SerializerMethodField()
-    region = serializers.SerializerMethodField()
+class BandSerializer(serializers.ModelSerializer):
+    molecules = MoleculeSerializer(many=True, read_only=True)
 
     class Meta:
-        model = models.Data
-        fields = [
-            "name",
-            "creation_date",
-            "molecule",
-            "band",
-            "disk",
-            "region",
-            "file",
-            "is_viewable",
-        ]
+        model = models.Band
+        fields = ["name", "molecules"]
 
-    def get_molecule(self, obj):
-        return obj.molecule.name
 
-    def get_band(self, obj):
-        return obj.molecule.band.name
+class DiskSerializer(serializers.ModelSerializer):
+    bands = BandSerializer(many=True, read_only=True)
 
-    def get_disk(self, obj):
-        return obj.molecule.band.disk.name
+    class Meta:
+        model = models.Disk
+        fields = ["name", "bands"]
 
-    def get_region(self, obj):
-        return obj.molecule.band.disk.region.name
+
+class RegionSerializer(serializers.ModelSerializer):
+    disks = DiskSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.Region
+        fields = ["name", "disks"]
