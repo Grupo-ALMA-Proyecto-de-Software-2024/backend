@@ -2,10 +2,6 @@ from rest_framework import serializers
 from .. import models
 
 
-class HelloSerializer(serializers.Serializer):
-    message = serializers.CharField(max_length=100)
-
-
 class CarouselImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CarouselImage
