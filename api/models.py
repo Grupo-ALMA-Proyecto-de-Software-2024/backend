@@ -1,4 +1,9 @@
+import logging
+from typing import Optional
+
 from django.db import models
+
+logger = logging.getLogger(__name__)
 
 
 class CarouselImage(models.Model):
@@ -11,51 +16,86 @@ class CarouselImage(models.Model):
         return self.title
 
 
-class Region(models.Model):
-    name = models.CharField(
-        max_length=40,
-        choices=[
-            ("Ophiuchus", "Ophiuchus"),
-            ("Lupus", "Lupus"),
-            ("UppSco", "UppSco"),
-        ],
-    )
+class BaseDataModel(models.Model):
+    name = models.CharField(max_length=40)
     creation_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
 
     def __str__(self):
         return self.name
 
 
-class Disk(models.Model):
-    name = models.CharField(max_length=40)
-    creation_date = models.DateTimeField(auto_now_add=True)
+class Region(BaseDataModel):
+    """A region in the galaxy."""
+
+
+class Disk(BaseDataModel):
+    """A disk in a region of the galaxy."""
+
     region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name="disks")
 
-    def __str__(self):
-        return self.name
+    @classmethod
+    def filter_disks(cls, name: Optional[str] = None, region: Optional[str] = None):
+        disks = cls.objects.select_related("region").all()
+        if name:
+            disks = disks.filter(name=name)
+        if region:
+            disks = disks.filter(region__name=region)
+        return disks
 
 
-class Band(models.Model):
-    name = models.CharField(max_length=40)
-    creation_date = models.DateTimeField(auto_now_add=True)
+class Band(BaseDataModel):
+    """A band in a disk of the galaxy."""
+
     disk = models.ForeignKey(Disk, on_delete=models.CASCADE, related_name="bands")
 
-    def __str__(self):
-        return self.name
+    @classmethod
+    def filter_bands(
+        cls,
+        name: Optional[str] = None,
+        disk: Optional[str] = None,
+        region: Optional[str] = None,
+    ):
+        bands = cls.objects.select_related("disk__region").all()
+        if name:
+            bands = bands.filter(name=name)
+        if disk:
+            bands = bands.filter(disk__name=disk)
+        if region:
+            bands = bands.filter(disk__region__name=region)
+        return bands
 
 
-class Molecule(models.Model):
-    name = models.CharField(max_length=40)
-    creation_date = models.DateTimeField(auto_now_add=True)
+class Molecule(BaseDataModel):
+    """A molecule in a band of a disk of the galaxy."""
+
     band = models.ForeignKey(Band, on_delete=models.CASCADE, related_name="molecules")
 
-    def __str__(self):
-        return self.name
+    @classmethod
+    def filter_molecules(
+        cls,
+        name: Optional[str] = None,
+        band: Optional[str] = None,
+        disk: Optional[str] = None,
+        region: Optional[str] = None,
+    ):
+        molecules = cls.objects.select_related("band__disk__region").all()
+        if name:
+            molecules = molecules.filter(name=name)
+        if band:
+            molecules = molecules.filter(band__name=band)
+        if disk:
+            molecules = molecules.filter(band__disk__name=disk)
+        if region:
+            molecules = molecules.filter(band__disk__region__name=region)
+        return molecules
 
 
-class Data(models.Model):
-    name = models.CharField(max_length=40)
-    creation_date = models.DateTimeField(auto_now_add=True)
+class Data(BaseDataModel):
+    """Data associated with a molecule."""
+
     molecule = models.ForeignKey(
         Molecule, on_delete=models.CASCADE, related_name="data"
     )
@@ -65,5 +105,24 @@ class Data(models.Model):
     class Meta:
         verbose_name_plural = "Data"
 
-    def __str__(self):
-        return self.name
+    @classmethod
+    def filter_data(
+        cls,
+        name: Optional[str] = None,
+        molecule: Optional[str] = None,
+        band: Optional[str] = None,
+        disk: Optional[str] = None,
+        region: Optional[str] = None,
+    ):
+        data = cls.objects.select_related("molecule__band__disk__region").all()
+        if name:
+            data = data.filter(name=name)
+        if molecule:
+            data = data.filter(molecule__name=molecule)
+        if band:
+            data = data.filter(molecule__band__name=band)
+        if disk:
+            data = data.filter(molecule__band__disk__name=disk)
+        if region:
+            data = data.filter(molecule__band__disk__region__name=region)
+        return data
