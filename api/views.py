@@ -40,8 +40,8 @@ class RegionView(APIView):
     )
     def get(self, request):
         regions = models.Region.objects.all()
-        if (name := request.query_params.get("name")) is not None:
-            regions = regions.filter(name=name)
+        if region := request.query_params.get("region"):
+            regions = regions.filter(name=region)
         serializer = full_context_serializers.FullContextRegionSerializer(
             regions, many=True
         )
@@ -59,7 +59,7 @@ class DiskView(APIView):
     )
     def get(self, request):
         disks = models.Disk.filter_disks(
-            name=request.query_params.get("name"),
+            name=request.query_params.get("disk"),
             region=request.query_params.get("region"),
         )
         serializer = full_context_serializers.FullContextDiskSerializer(
@@ -79,7 +79,7 @@ class BandView(APIView):
     )
     def get(self, request):
         bands = models.Band.filter_bands(
-            name=request.query_params.get("name"),
+            name=request.query_params.get("band"),
             disk=request.query_params.get("disk"),
             region=request.query_params.get("region"),
         )
@@ -100,7 +100,7 @@ class MoleculeView(APIView):
     )
     def get(self, request):
         molecules = models.Molecule.filter_molecules(
-            name=request.query_params.get("name"),
+            name=request.query_params.get("molecule"),
             band=request.query_params.get("band"),
             disk=request.query_params.get("disk"),
             region=request.query_params.get("region"),
@@ -124,7 +124,7 @@ class DataView(APIView):
     )
     def get(self, request):
         data = models.Data.filter_data(
-            name=request.query_params.get("name"),
+            name=request.query_params.get("data"),
             molecule=request.query_params.get("molecule"),
             band=request.query_params.get("band"),
             disk=request.query_params.get("disk"),

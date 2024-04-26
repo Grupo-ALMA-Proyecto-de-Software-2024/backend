@@ -2,7 +2,6 @@ import logging
 from typing import Optional
 
 from django.db import models
-from django.core.exceptions import FieldDoesNotExist
 
 logger = logging.getLogger(__name__)
 
@@ -27,23 +26,6 @@ class BaseDataModel(models.Model):
     def __str__(self):
         return self.name
 
-    @classmethod
-    def filter_objects(cls, related_fields: list[str], **kwargs):
-        queryset = cls.objects.select_related(*related_fields)
-        for key, value in kwargs.items():
-            if value is not None:
-                fields = key.split("__")
-                try:
-                    for field in fields:
-                        cls._meta.get_field(field)
-                    queryset = queryset.filter(**{key: value})
-                except FieldDoesNotExist:
-                    logger.warning(
-                        f"Trying to filter on non-existent field '{field}' in {cls.__name__}."
-                    )
-                    continue
-        return queryset
-
 
 class Region(BaseDataModel):
     """A region in the galaxy."""
@@ -56,11 +38,12 @@ class Disk(BaseDataModel):
 
     @classmethod
     def filter_disks(cls, name: Optional[str] = None, region: Optional[str] = None):
-        return super().filter_objects(
-            related_fields=["region"],
-            name=name,
-            region__name=region,
-        )
+        disks = cls.objects.select_related("region").all()
+        if name:
+            disks = disks.filter(name=name)
+        if region:
+            disks = disks.filter(region__name=region)
+        return disks
 
 
 class Band(BaseDataModel):
@@ -75,12 +58,14 @@ class Band(BaseDataModel):
         disk: Optional[str] = None,
         region: Optional[str] = None,
     ):
-        return super().filter_objects(
-            related_fields=["disk", "disk__region"],
-            name=name,
-            disk__name=disk,
-            disk__region__name=region,
-        )
+        bands = cls.objects.select_related("disk__region").all()
+        if name:
+            bands = bands.filter(name=name)
+        if disk:
+            bands = bands.filter(disk__name=disk)
+        if region:
+            bands = bands.filter(disk__region__name=region)
+        return bands
 
 
 class Molecule(BaseDataModel):
@@ -96,13 +81,16 @@ class Molecule(BaseDataModel):
         disk: Optional[str] = None,
         region: Optional[str] = None,
     ):
-        return super().filter_objects(
-            related_fields=["band", "band__disk", "band__disk__region"],
-            name=name,
-            band__name=band,
-            band__disk__name=disk,
-            band__disk__region__name=region,
-        )
+        molecules = cls.objects.select_related("band__disk__region").all()
+        if name:
+            molecules = molecules.filter(name=name)
+        if band:
+            molecules = molecules.filter(band__name=band)
+        if disk:
+            molecules = molecules.filter(band__disk__name=disk)
+        if region:
+            molecules = molecules.filter(band__disk__region__name=region)
+        return molecules
 
 
 class Data(BaseDataModel):
@@ -126,11 +114,15 @@ class Data(BaseDataModel):
         disk: Optional[str] = None,
         region: Optional[str] = None,
     ):
-        return super().filter_objects(
-            related_fields=["molecule", "molecule__band", "molecule__band__disk"],
-            name=name,
-            molecule__name=molecule,
-            molecule__band__name=band,
-            molecule__band__disk__name=disk,
-            molecule__band__disk__region__name=region,
-        )
+        data = cls.objects.select_related("molecule__band__disk__region").all()
+        if name:
+            data = data.filter(name=name)
+        if molecule:
+            data = data.filter(molecule__name=molecule)
+        if band:
+            data = data.filter(molecule__band__name=band)
+        if disk:
+            data = data.filter(molecule__band__disk__name=disk)
+        if region:
+            data = data.filter(molecule__band__disk__region__name=region)
+        return data
