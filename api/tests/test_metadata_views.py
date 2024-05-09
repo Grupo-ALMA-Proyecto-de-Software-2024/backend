@@ -218,6 +218,57 @@ class ViewTestWithMultipleFilters(TestCase):
         self.assertEqual(response.data["data"][0]["name"], "Data1")
         self.assertEqual(response.data["data"][1]["name"], "Data2")
 
+    def test_region_view_with_filter_and_a_non_existent_region(self):
+        url = reverse("regions") + "?region=Region1&region=Region3"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("regions", response.data)
+        self.assertEqual(len(response.data["regions"]), 1)
+        self.assertEqual(response.data["regions"][0]["name"], "Region1")
+
+    def test_disk_view_with_filter_and_a_non_existent_disk(self):
+        url = reverse("disks") + "?disk=Disk1&disk=Disk3&region=Region1"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("disks", response.data)
+        self.assertEqual(len(response.data["disks"]), 1)
+        self.assertEqual(response.data["disks"][0]["name"], "Disk1")
+
+    def test_band_view_with_filter_and_a_non_existent_band(self):
+        url = reverse("bands") + "?band=Band1&band=Band3&disk=Disk1&region=Region1"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("bands", response.data)
+        self.assertEqual(len(response.data["bands"]), 1)
+        self.assertEqual(response.data["bands"][0]["name"], "Band1")
+
+    def test_molecule_view_with_filter_and_a_non_existent_molecule(self):
+        url = (
+            reverse("molecules")
+            + "?molecule=Molecule1&molecule=Molecule3&band=Band1&disk=Disk1&region=Region1"
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("molecules", response.data)
+        self.assertEqual(len(response.data["molecules"]), 1)
+        self.assertEqual(response.data["molecules"][0]["name"], "Molecule1")
+
+    def test_data_view_with_filter_and_a_non_existent_data(self):
+        url = (
+            reverse("data")
+            + "?data=Data1&data=Data3&molecule=Molecule1&band=Band1&disk=Disk1&region=Region1"
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("data", response.data)
+        self.assertEqual(len(response.data["data"]), 1)
+        self.assertEqual(response.data["data"][0]["name"], "Data1")
+
 
 class ViewTestWithNoResults(TestCase):
     def setUp(self):

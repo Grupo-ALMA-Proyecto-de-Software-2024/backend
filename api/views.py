@@ -15,6 +15,8 @@ def build_openapi_parameters(names: list[str]) -> list[OpenApiParameter]:
             location=OpenApiParameter.QUERY,
             description=f"Filter by {name}",
             required=False,
+            style="form",
+            explode=True,
         )
         for name in names
     ]
