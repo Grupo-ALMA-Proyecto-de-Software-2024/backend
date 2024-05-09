@@ -193,7 +193,8 @@ class ViewTestWithMultipleFilters(TestCase):
     def test_molecule_view_with_multiple_filters(self):
         url = (
             reverse("molecules")
-            + "?molecule=Molecule1&molecule=Molecule2&band=Band1&band=Band2&disk=Disk1&disk=Disk2&region=Region1&region=Region2"
+            + "?molecule=Molecule1&molecule=Molecule2&band=Band1&band=Band2"
+            + "&disk=Disk1&disk=Disk2&region=Region1&region=Region2"
         )
         response = self.client.get(url)
 
@@ -206,7 +207,8 @@ class ViewTestWithMultipleFilters(TestCase):
     def test_data_view_with_multiple_filters(self):
         url = (
             reverse("data")
-            + "?data=Data1&data=Data2&molecule=Molecule1&molecule=Molecule2&band=Band1&band=Band2&disk=Disk1&disk=Disk2&region=Region1&region=Region2"
+            + "?data=Data1&data=Data2&molecule=Molecule1&molecule=Molecule2"
+            + "&band=Band1&band=Band2&disk=Disk1&disk=Disk2&region=Region1&region=Region2"
         )
         response = self.client.get(url)
 
