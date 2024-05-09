@@ -27,17 +27,6 @@ class BaseDataModel(models.Model):
         return self.name
 
 
-def filter_by_field(
-    queryset: models.QuerySet, field: str, value: str | list[str]
-) -> models.QuerySet:
-    if value:
-        if isinstance(value, str):
-            return queryset.filter(**{field: value})
-        elif isinstance(value, list):
-            return queryset.filter(**{f"{field}__in": value})
-    return queryset
-
-
 class Region(BaseDataModel):
     """A region in the galaxy."""
 
@@ -50,12 +39,14 @@ class Disk(BaseDataModel):
     @classmethod
     def filter_disks(
         cls,
-        name: Optional[str | list[str]] = None,
-        region: Optional[str | list[str]] = None,
+        name: Optional[list[str]] = None,
+        region: Optional[list[str]] = None,
     ):
         disks = cls.objects.select_related("region").all()
-        disks = filter_by_field(queryset=disks, field="name", value=name)
-        disks = filter_by_field(queryset=disks, field="region__name", value=region)
+        if name:
+            disks = disks.filter(name__in=name)
+        if region:
+            disks = disks.filter(region__name__in=region)
         return disks
 
 
@@ -67,16 +58,17 @@ class Band(BaseDataModel):
     @classmethod
     def filter_bands(
         cls,
-        name: Optional[str | list[str]] = None,
-        disk: Optional[str | list[str]] = None,
-        region: Optional[str | list[str]] = None,
+        name: Optional[list[str]] = None,
+        disk: Optional[list[str]] = None,
+        region: Optional[list[str]] = None,
     ):
         bands = cls.objects.select_related("disk__region").all()
-        bands = filter_by_field(queryset=bands, field="name", value=name)
-        bands = filter_by_field(queryset=bands, field="disk__name", value=disk)
-        bands = filter_by_field(
-            queryset=bands, field="disk__region__name", value=region
-        )
+        if name:
+            bands = bands.filter(name__in=name)
+        if disk:
+            bands = bands.filter(disk__name__in=disk)
+        if region:
+            bands = bands.filter(disk__region__name__in=region)
         return bands
 
 
@@ -88,20 +80,20 @@ class Molecule(BaseDataModel):
     @classmethod
     def filter_molecules(
         cls,
-        name: Optional[str | list[str]] = None,
-        band: Optional[str | list[str]] = None,
-        disk: Optional[str | list[str]] = None,
-        region: Optional[str | list[str]] = None,
+        name: Optional[list[str]] = None,
+        band: Optional[list[str]] = None,
+        disk: Optional[list[str]] = None,
+        region: Optional[list[str]] = None,
     ):
         molecules = cls.objects.select_related("band__disk__region").all()
-        molecules = filter_by_field(queryset=molecules, field="name", value=name)
-        molecules = filter_by_field(queryset=molecules, field="band__name", value=band)
-        molecules = filter_by_field(
-            queryset=molecules, field="band__disk__name", value=disk
-        )
-        molecules = filter_by_field(
-            queryset=molecules, field="band__disk__region__name", value=region
-        )
+        if name:
+            molecules = molecules.filter(name__in=name)
+        if band:
+            molecules = molecules.filter(band__name__in=band)
+        if disk:
+            molecules = molecules.filter(band__disk__name__in=disk)
+        if region:
+            molecules = molecules.filter(band__disk__region__name__in=region)
         return molecules
 
 
@@ -120,20 +112,21 @@ class Data(BaseDataModel):
     @classmethod
     def filter_data(
         cls,
-        name: Optional[str | list[str]] = None,
-        molecule: Optional[str | list[str]] = None,
-        band: Optional[str | list[str]] = None,
-        disk: Optional[str | list[str]] = None,
-        region: Optional[str | list[str]] = None,
+        name: Optional[list[str]] = None,
+        molecule: Optional[list[str]] = None,
+        band: Optional[list[str]] = None,
+        disk: Optional[list[str]] = None,
+        region: Optional[list[str]] = None,
     ):
         data = cls.objects.select_related("molecule__band__disk__region").all()
-        data = filter_by_field(queryset=data, field="name", value=name)
-        data = filter_by_field(queryset=data, field="molecule__name", value=molecule)
-        data = filter_by_field(queryset=data, field="molecule__band__name", value=band)
-        data = filter_by_field(
-            queryset=data, field="molecule__band__disk__name", value=disk
-        )
-        data = filter_by_field(
-            queryset=data, field="molecule__band__disk__region__name", value=region
-        )
+        if name:
+            data = data.filter(name__in=name)
+        if molecule:
+            data = data.filter(molecule__name__in=molecule)
+        if band:
+            data = data.filter(molecule__band__name__in=band)
+        if disk:
+            data = data.filter(molecule__band__disk__name__in=disk)
+        if region:
+            data = data.filter(molecule__band__disk__region__name__in=region)
         return data
