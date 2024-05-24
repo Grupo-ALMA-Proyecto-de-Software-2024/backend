@@ -15,3 +15,29 @@ class CarouselImageAdmin(admin.ModelAdmin):
         return "No Image"
 
     image_tag.short_description = "Image Preview"
+
+
+class PublicationAdmin(admin.ModelAdmin):
+    list_display = ("title", "authors", "journal_info")
+    search_fields = ("title", "authors", "journal_info")
+    readonly_fields = ("image_tag",)
+    fields = (
+        "title",
+        "authors",
+        "full_authors",
+        "journal_info",
+        "summary",
+        "image",
+        "image_tag",
+        "pdf_link",
+        "bibtex_link",
+        "data_link",
+        "sao_nasa_link",
+    )
+
+    def image_tag(self, obj):
+        if obj.image:
+            return mark_safe(f'<img src="{obj.image.url}" width="200" height="200" />')
+        return "No Image"
+
+    image_tag.short_description = "Image Preview"

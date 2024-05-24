@@ -16,3 +16,15 @@ class CarouselImageView(APIView):
     @classmethod
     def get_serializer_class(cls):
         return serializers.CarouselImageSerializer
+
+
+class PublicationView(APIView):
+    @extend_schema(tags=["API"])
+    def get(self, request: Request):
+        publications = models.Publication.objects.all()
+        serializer = serializers.PublicationSerializer(publications, many=True)
+        return Response(serializer.data)
+
+    @classmethod
+    def get_serializer_class(cls):
+        return serializers.PublicationSerializer

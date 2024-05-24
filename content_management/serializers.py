@@ -7,3 +7,9 @@ class CarouselImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CarouselImage
         fields = ["image", "title", "description", "creation_date"]
+
+
+class PublicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Publication
+        fields = "__all__"
