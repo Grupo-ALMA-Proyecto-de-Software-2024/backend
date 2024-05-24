@@ -17,6 +17,7 @@ migrate:
 	@poetry run python manage.py makemigrations
 	@poetry run python manage.py migrate
 	@poetry run python manage.py migrate api
+	@poetry run python manage.py migrate content_management
 
 superuser:
 	@poetry run python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'admin') and print('Superuser created successfully')"
