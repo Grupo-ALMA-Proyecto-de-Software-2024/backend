@@ -1,10 +1,10 @@
-from PIL import Image
 from pathlib import Path
 
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework.test import APIClient
+from PIL import Image
 
 from ..models import CarouselImage
 

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "corsheaders",
     # local
     "api",
+    "content_management",
 ]
 
 MIDDLEWARE = [

@@ -38,6 +38,11 @@ urlpatterns = [
     path("admin/", admin_site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path("api/", include("api.urls"), name="api"),
+    path(
+        "content-management/",
+        include("content_management.urls"),
+        name="content-management",
+    ),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/schema/swagger-ui/",

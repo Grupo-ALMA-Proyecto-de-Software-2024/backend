@@ -6,16 +6,6 @@ from django.db import models
 logger = logging.getLogger(__name__)
 
 
-class CarouselImage(models.Model):
-    image = models.ImageField(upload_to="carousel/")
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    creation_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.title
-
-
 class BaseDataModel(models.Model):
     name = models.CharField(max_length=40)
     creation_date = models.DateTimeField(auto_now_add=True)

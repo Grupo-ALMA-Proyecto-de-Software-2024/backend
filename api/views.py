@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from . import models
-from .serializers import compact_serializers, full_context_serializers
+from .serializers import full_context_serializers
 
 
 def build_openapi_parameters(names: list[str]) -> list[OpenApiParameter]:
@@ -20,20 +20,6 @@ def build_openapi_parameters(names: list[str]) -> list[OpenApiParameter]:
         )
         for name in names
     ]
-
-
-class CarouselImageView(APIView):
-    @extend_schema(tags=["API"])
-    def get(self, request: Request):
-        carousel_images = models.CarouselImage.objects.all()
-        serializer = compact_serializers.CarouselImageSerializer(
-            carousel_images, many=True
-        )
-        return Response(serializer.data)
-
-    @classmethod
-    def get_serializer_class(cls):
-        return compact_serializers.CarouselImageSerializer
 
 
 class RegionView(APIView):
