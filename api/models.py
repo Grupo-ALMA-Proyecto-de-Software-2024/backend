@@ -40,7 +40,7 @@ class Disk(BaseDataModel):
             disks = disks.filter(name__in=name)
         if regions:
             disks = disks.filter(regions__name__in=regions)
-        return disks
+        return disks.prefetch_related("regions")
 
 
 class Band(BaseDataModel):
@@ -55,14 +55,14 @@ class Band(BaseDataModel):
         disks: Optional[list[str]] = None,
         regions: Optional[list[str]] = None,
     ):
-        bands = cls.objects.select_related("disks__regions").all()
+        bands = cls.objects.all()
         if name:
             bands = bands.filter(name__in=name)
         if disks:
             bands = bands.filter(disks__name__in=disks)
         if regions:
             bands = bands.filter(disks__regions__name__in=regions)
-        return bands
+        return bands.prefetch_related("disks__regions")
 
 
 class Molecule(BaseDataModel):
@@ -78,7 +78,7 @@ class Molecule(BaseDataModel):
         disks: Optional[list[str]] = None,
         regions: Optional[list[str]] = None,
     ):
-        molecules = cls.objects.select_related("bands__disks__regions").all()
+        molecules = cls.objects.all()
         if name:
             molecules = molecules.filter(name__in=name)
         if bands:
@@ -87,7 +87,7 @@ class Molecule(BaseDataModel):
             molecules = molecules.filter(bands__disks__name__in=disks)
         if regions:
             molecules = molecules.filter(bands__disks__regions__name__in=regions)
-        return molecules
+        return molecules.prefetch_related("bands__disks__regions")
 
 
 class Data(BaseDataModel):

@@ -30,7 +30,7 @@ class MoleculeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Molecule
-        fields = "__all__"
+        fields = ["name", "creation_date", "data"]
 
 
 class BandSerializer(serializers.ModelSerializer):
@@ -38,7 +38,7 @@ class BandSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Band
-        fields = "__all__"
+        fields = ["name", "creation_date", "molecules"]
 
 
 class DiskSerializer(serializers.ModelSerializer):
@@ -46,7 +46,7 @@ class DiskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Disk
-        fields = "__all__"
+        fields = ["name", "creation_date", "bands"]
 
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -54,4 +54,4 @@ class RegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Region
-        fields = "__all__"
+        fields = ["name", "creation_date", "disks"]
