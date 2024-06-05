@@ -10,7 +10,7 @@ class DataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Data
-        fields = ["region", "disk", "band", "molecule", "file", "is_viewable"]
+        fields = ["name", "region", "disk", "band", "molecule", "file", "is_viewable"]
 
     def get_region(self, obj):
         return obj.region.name

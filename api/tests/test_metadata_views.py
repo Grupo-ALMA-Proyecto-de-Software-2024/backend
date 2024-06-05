@@ -12,11 +12,20 @@ class ViewNoQueryParamsTest(TestCase):
 
         # Create test data
         self.region = Region.objects.create(name="Region1")
-        self.disk = Disk.objects.create(name="Disk1", region=self.region)
-        self.band = Band.objects.create(name="Band1", disk=self.disk)
-        self.molecule = Molecule.objects.create(name="Molecule1", band=self.band)
+        self.disk = Disk.objects.create(name="Disk1")
+        self.disk.regions.add(self.region)
+        self.band = Band.objects.create(name="Band1")
+        self.band.disks.add(self.disk)
+        self.molecule = Molecule.objects.create(name="Molecule1")
+        self.molecule.bands.add(self.band)
         self.data = Data.objects.create(
-            name="Data1", molecule=self.molecule, file="file1", is_viewable=True
+            name="Data1",
+            molecule=self.molecule,
+            band=self.band,
+            disk=self.disk,
+            region=self.region,
+            file="file1",
+            is_viewable=True,
         )
 
     def test_region_view(self):
@@ -73,17 +82,35 @@ class ViewTestWithQueryParams(TestCase):
 
         self.region1 = Region.objects.create(name="Region1")
         self.region2 = Region.objects.create(name="Region2")
-        self.disk1 = Disk.objects.create(name="Disk1", region=self.region1)
-        self.disk2 = Disk.objects.create(name="Disk2", region=self.region2)
-        self.band1 = Band.objects.create(name="Band1", disk=self.disk1)
-        self.band2 = Band.objects.create(name="Band2", disk=self.disk2)
-        self.molecule1 = Molecule.objects.create(name="Molecule1", band=self.band1)
-        self.molecule2 = Molecule.objects.create(name="Molecule2", band=self.band2)
+        self.disk1 = Disk.objects.create(name="Disk1")
+        self.disk1.regions.add(self.region1)
+        self.disk2 = Disk.objects.create(name="Disk2")
+        self.disk2.regions.add(self.region2)
+        self.band1 = Band.objects.create(name="Band1")
+        self.band1.disks.add(self.disk1)
+        self.band2 = Band.objects.create(name="Band2")
+        self.band2.disks.add(self.disk2)
+        self.molecule1 = Molecule.objects.create(name="Molecule1")
+        self.molecule1.bands.add(self.band1)
+        self.molecule2 = Molecule.objects.create(name="Molecule2")
+        self.molecule2.bands.add(self.band2)
         self.data1 = Data.objects.create(
-            name="Data1", molecule=self.molecule1, file="file1", is_viewable=True
+            name="Data1",
+            molecule=self.molecule1,
+            band=self.band1,
+            disk=self.disk1,
+            region=self.region1,
+            file="file1",
+            is_viewable=True,
         )
         self.data2 = Data.objects.create(
-            name="Data2", molecule=self.molecule2, file="file2", is_viewable=True
+            name="Data2",
+            molecule=self.molecule2,
+            band=self.band2,
+            disk=self.disk2,
+            region=self.region2,
+            file="file2",
+            is_viewable=True,
         )
 
     def test_region_view_with_filter(self):
@@ -144,17 +171,35 @@ class ViewTestWithMultipleFilters(TestCase):
 
         self.region1 = Region.objects.create(name="Region1")
         self.region2 = Region.objects.create(name="Region2")
-        self.disk1 = Disk.objects.create(name="Disk1", region=self.region1)
-        self.disk2 = Disk.objects.create(name="Disk2", region=self.region2)
-        self.band1 = Band.objects.create(name="Band1", disk=self.disk1)
-        self.band2 = Band.objects.create(name="Band2", disk=self.disk2)
-        self.molecule1 = Molecule.objects.create(name="Molecule1", band=self.band1)
-        self.molecule2 = Molecule.objects.create(name="Molecule2", band=self.band2)
+        self.disk1 = Disk.objects.create(name="Disk1")
+        self.disk1.regions.add(self.region1)
+        self.disk2 = Disk.objects.create(name="Disk2")
+        self.disk2.regions.add(self.region2)
+        self.band1 = Band.objects.create(name="Band1")
+        self.band1.disks.add(self.disk1)
+        self.band2 = Band.objects.create(name="Band2")
+        self.band2.disks.add(self.disk2)
+        self.molecule1 = Molecule.objects.create(name="Molecule1")
+        self.molecule1.bands.add(self.band1)
+        self.molecule2 = Molecule.objects.create(name="Molecule2")
+        self.molecule2.bands.add(self.band2)
         self.data1 = Data.objects.create(
-            name="Data1", molecule=self.molecule1, file="file1", is_viewable=True
+            name="Data1",
+            molecule=self.molecule1,
+            band=self.band1,
+            disk=self.disk1,
+            region=self.region1,
+            file="file1",
+            is_viewable=True,
         )
         self.data2 = Data.objects.create(
-            name="Data2", molecule=self.molecule2, file="file2", is_viewable=True
+            name="Data2",
+            molecule=self.molecule2,
+            band=self.band2,
+            disk=self.disk2,
+            region=self.region2,
+            file="file2",
+            is_viewable=True,
         )
 
     def test_region_view_with_multiple_filters(self):
@@ -276,17 +321,35 @@ class ViewTestWithNoResults(TestCase):
 
         self.region1 = Region.objects.create(name="Region1")
         self.region2 = Region.objects.create(name="Region2")
-        self.disk1 = Disk.objects.create(name="Disk1", region=self.region1)
-        self.disk2 = Disk.objects.create(name="Disk2", region=self.region2)
-        self.band1 = Band.objects.create(name="Band1", disk=self.disk1)
-        self.band2 = Band.objects.create(name="Band2", disk=self.disk2)
-        self.molecule1 = Molecule.objects.create(name="Molecule1", band=self.band1)
-        self.molecule2 = Molecule.objects.create(name="Molecule2", band=self.band2)
+        self.disk1 = Disk.objects.create(name="Disk1")
+        self.disk1.regions.add(self.region1)
+        self.disk2 = Disk.objects.create(name="Disk2")
+        self.disk2.regions.add(self.region2)
+        self.band1 = Band.objects.create(name="Band1")
+        self.band1.disks.add(self.disk1)
+        self.band2 = Band.objects.create(name="Band2")
+        self.band2.disks.add(self.disk2)
+        self.molecule1 = Molecule.objects.create(name="Molecule1")
+        self.molecule1.bands.add(self.band1)
+        self.molecule2 = Molecule.objects.create(name="Molecule2")
+        self.molecule2.bands.add(self.band2)
         self.data1 = Data.objects.create(
-            name="Data1", molecule=self.molecule1, file="file1", is_viewable=True
+            name="Data1",
+            molecule=self.molecule1,
+            band=self.band1,
+            disk=self.disk1,
+            region=self.region1,
+            file="file1",
+            is_viewable=True,
         )
         self.data2 = Data.objects.create(
-            name="Data2", molecule=self.molecule2, file="file2", is_viewable=True
+            name="Data2",
+            molecule=self.molecule2,
+            band=self.band2,
+            disk=self.disk2,
+            region=self.region2,
+            file="file2",
+            is_viewable=True,
         )
 
     def test_region_view_no_results(self):
