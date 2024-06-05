@@ -3,8 +3,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
-from . import models
-from .serializers import full_context_serializers
+from . import models, serializers
 
 
 def build_openapi_parameters(names: list[str]) -> list[OpenApiParameter]:
@@ -31,14 +30,12 @@ class RegionView(APIView):
         regions = models.Region.objects.all()
         if region := request.query_params.getlist("region"):
             regions = regions.filter(name__in=region)
-        serializer = full_context_serializers.FullContextRegionSerializer(
-            regions, many=True
-        )
+        serializer = serializers.RegionSerializer(regions, many=True)
         return Response({"regions": serializer.data})
 
     @classmethod
     def get_serializer_class(cls):
-        return full_context_serializers.FullContextRegionSerializer
+        return serializers.RegionSerializer
 
 
 class DiskView(APIView):
@@ -49,16 +46,14 @@ class DiskView(APIView):
     def get(self, request: Request):
         disks = models.Disk.filter_disks(
             name=request.query_params.getlist("disk"),
-            region=request.query_params.getlist("region"),
+            regions=request.query_params.getlist("region"),
         )
-        serializer = full_context_serializers.FullContextDiskSerializer(
-            disks, many=True
-        )
+        serializer = serializers.DiskSerializer(disks, many=True)
         return Response({"disks": serializer.data})
 
     @classmethod
     def get_serializer_class(cls):
-        return full_context_serializers.FullContextDiskSerializer
+        return serializers.DiskSerializer
 
 
 class BandView(APIView):
@@ -69,17 +64,15 @@ class BandView(APIView):
     def get(self, request: Request):
         bands = models.Band.filter_bands(
             name=request.query_params.getlist("band"),
-            disk=request.query_params.getlist("disk"),
-            region=request.query_params.getlist("region"),
+            disks=request.query_params.getlist("disk"),
+            regions=request.query_params.getlist("region"),
         )
-        serializer = full_context_serializers.FullContextBandSerializer(
-            bands, many=True
-        )
+        serializer = serializers.BandSerializer(bands, many=True)
         return Response({"bands": serializer.data})
 
     @classmethod
     def get_serializer_class(cls):
-        return full_context_serializers.FullContextBandSerializer
+        return serializers.BandSerializer
 
 
 class MoleculeView(APIView):
@@ -90,18 +83,16 @@ class MoleculeView(APIView):
     def get(self, request: Request):
         molecules = models.Molecule.filter_molecules(
             name=request.query_params.getlist("molecule"),
-            band=request.query_params.getlist("band"),
-            disk=request.query_params.getlist("disk"),
-            region=request.query_params.getlist("region"),
+            bands=request.query_params.getlist("band"),
+            disks=request.query_params.getlist("disk"),
+            regions=request.query_params.getlist("region"),
         )
-        serializer = full_context_serializers.FullContextMoleculeSerializer(
-            molecules, many=True
-        )
+        serializer = serializers.MoleculeSerializer(molecules, many=True)
         return Response({"molecules": serializer.data})
 
     @classmethod
     def get_serializer_class(cls):
-        return full_context_serializers.FullContextMoleculeSerializer
+        return serializers.MoleculeSerializer
 
 
 class DataView(APIView):
@@ -114,14 +105,14 @@ class DataView(APIView):
     def get(self, request: Request):
         data = models.Data.filter_by_name(
             name=request.query_params.getlist("data"),
-            molecule=request.query_params.getlist("molecule"),
-            band=request.query_params.getlist("band"),
-            disk=request.query_params.getlist("disk"),
-            region=request.query_params.getlist("region"),
+            molecule_name=request.query_params.getlist("molecule"),
+            band_name=request.query_params.getlist("band"),
+            disk_name=request.query_params.getlist("disk"),
+            region_name=request.query_params.getlist("region"),
         )
-        serializer = full_context_serializers.FullContextDataSerializer(data, many=True)
+        serializer = serializers.DataSerializer(data, many=True)
         return Response({"data": serializer.data})
 
     @classmethod
     def get_serializer_class(cls):
-        return full_context_serializers.FullContextDataSerializer
+        return serializers.DataSerializer

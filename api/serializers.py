@@ -1,12 +1,28 @@
 from rest_framework import serializers
-
-from .. import models
+from . import models
 
 
 class DataSerializer(serializers.ModelSerializer):
+    region = serializers.SerializerMethodField()
+    disk = serializers.SerializerMethodField()
+    band = serializers.SerializerMethodField()
+    molecule = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Data
-        fields = ["name", "creation_date", "file", "is_viewable"]
+        fields = ["region", "disk", "band", "molecule", "file", "is_viewable"]
+
+    def get_region(self, obj):
+        return obj.region.name
+
+    def get_disk(self, obj):
+        return obj.disk.name
+
+    def get_band(self, obj):
+        return obj.band.name
+
+    def get_molecule(self, obj):
+        return obj.molecule.name
 
 
 class MoleculeSerializer(serializers.ModelSerializer):
@@ -14,7 +30,7 @@ class MoleculeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Molecule
-        fields = ["name", "data"]
+        fields = "__all__"
 
 
 class BandSerializer(serializers.ModelSerializer):
@@ -22,7 +38,7 @@ class BandSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Band
-        fields = ["name", "molecules"]
+        fields = "__all__"
 
 
 class DiskSerializer(serializers.ModelSerializer):
@@ -30,7 +46,7 @@ class DiskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Disk
-        fields = ["name", "bands"]
+        fields = "__all__"
 
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -38,4 +54,4 @@ class RegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Region
-        fields = ["name", "disks"]
+        fields = "__all__"
