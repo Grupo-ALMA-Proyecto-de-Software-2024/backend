@@ -112,7 +112,7 @@ class DataView(APIView):
         ),
     )
     def get(self, request: Request):
-        data = models.Data.filter_data(
+        data = models.Data.filter_by_name(
             name=request.query_params.getlist("data"),
             molecule=request.query_params.getlist("molecule"),
             band=request.query_params.getlist("band"),
