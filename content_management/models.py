@@ -25,3 +25,11 @@ class Publication(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class PressNews(models.Model):
+    content = models.TextField()
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.content

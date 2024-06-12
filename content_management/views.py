@@ -28,3 +28,15 @@ class PublicationView(APIView):
     @classmethod
     def get_serializer_class(cls):
         return serializers.PublicationSerializer
+
+
+class PressNewsView(APIView):
+    @extend_schema(tags=["API"])
+    def get(self, request: Request):
+        press_news = models.PressNews.objects.all()
+        serializer = serializers.PressNewsSerializer(press_news, many=True)
+        return Response(serializer.data)
+
+    @classmethod
+    def get_serializer_class(cls):
+        return serializers.PressNewsSerializer
