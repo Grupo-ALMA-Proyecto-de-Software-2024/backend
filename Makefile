@@ -15,6 +15,8 @@ test:
 
 migrate:
 	@poetry run python manage.py makemigrations
+	@poetry run python manage.py makemigrations api
+	@poetry run python manage.py makemigrations content_management
 	@poetry run python manage.py migrate
 	@poetry run python manage.py migrate api
 	@poetry run python manage.py migrate content_management
