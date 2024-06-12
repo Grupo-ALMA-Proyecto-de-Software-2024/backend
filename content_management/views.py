@@ -11,7 +11,7 @@ class CarouselImageView(APIView):
     def get(self, request: Request):
         carousel_images = models.CarouselImage.objects.all()
         serializer = serializers.CarouselImageSerializer(carousel_images, many=True)
-        return Response(serializer.data)
+        return Response({"carousel_images": serializer.data})
 
     @classmethod
     def get_serializer_class(cls):
@@ -23,7 +23,7 @@ class PublicationView(APIView):
     def get(self, request: Request):
         publications = models.Publication.objects.all()
         serializer = serializers.PublicationSerializer(publications, many=True)
-        return Response(serializer.data)
+        return Response({"publications": serializer.data})
 
     @classmethod
     def get_serializer_class(cls):
@@ -35,7 +35,7 @@ class PressNewsView(APIView):
     def get(self, request: Request):
         press_news = models.PressNews.objects.all()
         serializer = serializers.PressNewsSerializer(press_news, many=True)
-        return Response(serializer.data)
+        return Response({"press_news": serializer.data})
 
     @classmethod
     def get_serializer_class(cls):

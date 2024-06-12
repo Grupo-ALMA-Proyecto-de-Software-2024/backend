@@ -34,8 +34,9 @@ class CarouselImageViewTest(TestCase):
 
     def test_carousel_image_list(self):
         response = self.client.get(reverse("carousel"))
+        response_data = response.data["carousel_images"]
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["title"], "Test Image")
-        self.assertEqual(response.data[0]["description"], "Test Description")
-        self.assertEqual(response.data[0]["image"], self.carousel_image.image.url)
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(response_data[0]["title"], "Test Image")
+        self.assertEqual(response_data[0]["description"], "Test Description")
+        self.assertEqual(response_data[0]["image"], self.carousel_image.image.url)
