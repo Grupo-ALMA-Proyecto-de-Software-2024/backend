@@ -41,19 +41,20 @@ class PublicationViewTest(TestCase):
 
     def test_publication_list(self):
         response = self.client.get(reverse("publications"))
+        response_data = response.data["publications"]
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["title"], "Test Publication")
-        self.assertEqual(response.data[0]["authors"], "Author1, Author2")
-        self.assertEqual(response.data[0]["full_authors"], "Author1, Author2")
-        self.assertEqual(response.data[0]["journal_info"], "Journal of Testing")
-        self.assertEqual(response.data[0]["summary"], "This is a test summary.")
-        self.assertEqual(response.data[0]["image"], self.publication.image.url)
-        self.assertEqual(response.data[0]["pdf_link"], "http://example.com/test.pdf")
-        self.assertEqual(response.data[0]["bibtex_link"], "http://example.com/test.bib")
-        self.assertEqual(response.data[0]["data_link"], "http://example.com/test.data")
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(response_data[0]["title"], "Test Publication")
+        self.assertEqual(response_data[0]["authors"], "Author1, Author2")
+        self.assertEqual(response_data[0]["full_authors"], "Author1, Author2")
+        self.assertEqual(response_data[0]["journal_info"], "Journal of Testing")
+        self.assertEqual(response_data[0]["summary"], "This is a test summary.")
+        self.assertEqual(response_data[0]["image"], self.publication.image.url)
+        self.assertEqual(response_data[0]["pdf_link"], "http://example.com/test.pdf")
+        self.assertEqual(response_data[0]["bibtex_link"], "http://example.com/test.bib")
+        self.assertEqual(response_data[0]["data_link"], "http://example.com/test.data")
         self.assertEqual(
-            response.data[0]["sao_nasa_link"], "http://example.com/test.sao"
+            response_data[0]["sao_nasa_link"], "http://example.com/test.sao"
         )
 
     def test_publication_fields(self):

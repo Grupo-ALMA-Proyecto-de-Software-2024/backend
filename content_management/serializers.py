@@ -13,3 +13,9 @@ class PublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Publication
         fields = "__all__"
+
+
+class PressNewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.PressNews
+        fields = ["content", "news_type", "creation_date"]

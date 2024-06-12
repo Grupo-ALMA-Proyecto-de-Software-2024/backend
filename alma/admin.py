@@ -4,8 +4,12 @@ from django.contrib.auth.admin import UserAdmin
 from alma.admin_site import AlmaAdminSite
 from api.models import Region, Disk, Band, Molecule, Data
 from api.admin import RegionAdmin, DiskAdmin, BandAdmin, MoleculeAdmin
-from content_management.models import CarouselImage, Publication
-from content_management.admin import CarouselImageAdmin, PublicationAdmin
+from content_management.models import CarouselImage, Publication, PressNews
+from content_management.admin import (
+    CarouselImageAdmin,
+    PublicationAdmin,
+    PressNewsAdmin,
+)
 
 admin_site = AlmaAdminSite(name="ALMA Administration")
 
@@ -22,3 +26,4 @@ admin_site.register(Data)
 # content_management admin
 admin_site.register(CarouselImage, CarouselImageAdmin)
 admin_site.register(Publication, PublicationAdmin)
+admin_site.register(PressNews, PressNewsAdmin)

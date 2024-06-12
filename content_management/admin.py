@@ -48,3 +48,16 @@ class PublicationAdmin(admin.ModelAdmin):
 
     image_tag.short_description = "Image Preview"
     summary_html.short_description = "Summary Visualization"
+
+
+class PressNewsAdmin(admin.ModelAdmin):
+    list_display = ("content", "creation_date", "news_type")
+    search_fields = ("content", "news_type")
+    list_filter = ("creation_date", "news_type")
+    readonly_fields = ("content_html",)
+    fields = ("content", "content_html", "news_type")
+
+    def content_html(self, obj):
+        return markdown_to_html(obj.content)
+
+    content_html.short_description = "Content Visualization"
