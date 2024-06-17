@@ -1,0 +1,12 @@
+{% extends "admin/change_list.html" %} {% load static %} {% block content %}
+<h2>Upload Data File</h2>
+<form
+  method="post"
+  enctype="multipart/form-data"
+  action="{% url 'admin:upload-file' %}"
+>
+  {% csrf_token %}
+  <input type="file" name="datafile" required /><br /><br />
+  <button type="submit" class="button">Upload</button>
+</form>
+{{ block.super }} {% endblock %}
