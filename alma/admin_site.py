@@ -1,6 +1,8 @@
 from typing import Any, List, Dict
+
 from django.contrib import admin
 
+from .bulk_upload import get_bulk_upload_urls
 
 MODELS_TEMPLATE = [
     {
@@ -77,3 +79,8 @@ class AlmaAdminSite(admin.AdminSite):
         app_dict = update_apps_layout(app_dict, MODELS_TEMPLATE)
 
         return list(app_dict.values())
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = get_bulk_upload_urls()
+        return custom_urls + urls
