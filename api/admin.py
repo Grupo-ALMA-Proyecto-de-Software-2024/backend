@@ -49,3 +49,7 @@ class BandAdmin(admin.ModelAdmin):
 class MoleculeAdmin(admin.ModelAdmin):
     inlines = (DataInline,)
     filter_horizontal = ("bands",)
+
+
+class DataAdmin(admin.ModelAdmin):
+    change_list_template = "admin/change_list.html"
