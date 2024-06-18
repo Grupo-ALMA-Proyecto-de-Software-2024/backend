@@ -17,16 +17,21 @@ class FileLevel(enum.Enum):
     MOLECULE = 4
     DATA = 5
 
+    @classmethod
+    def model_mapping(cls) -> dict[int, str]:
+        return {
+            cls.ROOT.value: "Region",
+            cls.REGION.value: "Disk",
+            cls.DISK.value: "Band",
+            cls.BAND.value: "Molecule",
+            cls.MOLECULE.value: "Data",
+        }
+
     @property
     def display_name(self) -> str:
-        return {
-            FileLevel.ROOT: "Root",
-            FileLevel.REGION: "Region",
-            FileLevel.DISK: "Disk",
-            FileLevel.BAND: "Band",
-            FileLevel.MOLECULE: "Molecule",
-            FileLevel.DATA: "Data",
-        }[self]
+        if self == self.ROOT:
+            return "Root"
+        return self.model_mapping()[self.value]
 
     @classmethod
     def values(cls) -> list[int]:
