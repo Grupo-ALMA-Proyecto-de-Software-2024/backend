@@ -1,4 +1,3 @@
-import os
 import zipfile
 import enum
 from pathlib import Path
@@ -29,6 +28,10 @@ class FileLevel(enum.Enum):
             FileLevel.DATA: "Data",
         }[self]
 
+    @classmethod
+    def values(cls) -> list[int]:
+        return [level.value for level in cls]
+
 
 def bfs_traversal(root: Path, level: int) -> Generator[tuple[Path, int], None, None]:
     queue = deque([(root, level)])
@@ -53,4 +56,10 @@ def process_zip_file(datafile: UploadedFile) -> None:
         root_dir = tmp_dir / extracted_folder_name
 
         for file_path, level in bfs_traversal(root_dir, FileLevel.ROOT.value):
-            print(f"{file_path} - {FileLevel(level).display_name}")
+            path = file_path.relative_to(root_dir)
+            print(f"{path} - {FileLevel(level).display_name}")
+
+            # TODO: Create entities based on the file path and level
+            # Example: create_region(file_path)
+
+            # TODO: Create relationships between entities: region -> disk -> band -> molecule -> data
