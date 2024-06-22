@@ -4,7 +4,7 @@ from django.urls import path
 from django.contrib import messages
 from django.core.files.uploadedfile import UploadedFile
 
-from .service import process_zip_file
+from .service import process_csv_file
 
 
 UPLOAD_TEMPLATE = "admin/upload_file.html"
@@ -14,7 +14,7 @@ def bulk_upload_view(request: HttpRequest) -> HttpResponse:
     if request.method == "POST" and request.FILES["datafile"]:
         datafile: UploadedFile = request.FILES["datafile"]
 
-        process_zip_file(datafile)
+        process_csv_file(datafile)
 
         messages.success(request, "File uploaded and processed successfully.")
         return HttpResponseRedirect(request.path)
