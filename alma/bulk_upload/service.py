@@ -1,6 +1,8 @@
 import pandas as pd
 from django.core.files.uploadedfile import UploadedFile
 
+from .crud import create_data_from_names
+
 
 EXPECTED_COLUMN_TYPES = {
     "region": str,
@@ -36,8 +38,21 @@ def load_csv_file(datafile: UploadedFile) -> pd.DataFrame:
     return data
 
 
+def populate_database(data: pd.DataFrame) -> None:
+    for row in data.itertuples(index=False):
+        create_data_from_names(
+            region_name=row.region,
+            disk_name=row.disco,
+            band_name=row.banda,
+            molecule_name=row.molecula,
+            data_name=row.nombre_dato,
+            file_path=row.link_dato,
+            is_viewable=row.visualizable,
+        )
+
+
 def process_csv_file(datafile: UploadedFile) -> None:
     print("Processing zip file!!!!!!!!!!!")
     data = load_csv_file(datafile)
-    print(data)
-    print(data.info())
+    populate_database(data)
+    print("Populated database!!!!!!!!!!!")
