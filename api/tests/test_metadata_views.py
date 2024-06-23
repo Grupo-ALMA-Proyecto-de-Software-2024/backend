@@ -24,7 +24,7 @@ class ViewNoQueryParamsTest(TestCase):
             band=self.band,
             disk=self.disk,
             region=self.region,
-            file="file1",
+            filepath="file1",
             is_viewable=True,
         )
 
@@ -100,7 +100,7 @@ class ViewTestWithQueryParams(TestCase):
             band=self.band1,
             disk=self.disk1,
             region=self.region1,
-            file="file1",
+            filepath="file1",
             is_viewable=True,
         )
         self.data2 = Data.objects.create(
@@ -109,7 +109,7 @@ class ViewTestWithQueryParams(TestCase):
             band=self.band2,
             disk=self.disk2,
             region=self.region2,
-            file="file2",
+            filepath="file2",
             is_viewable=True,
         )
 
@@ -189,7 +189,7 @@ class ViewTestWithMultipleFilters(TestCase):
             band=self.band1,
             disk=self.disk1,
             region=self.region1,
-            file="file1",
+            filepath="file1",
             is_viewable=True,
         )
         self.data2 = Data.objects.create(
@@ -198,7 +198,7 @@ class ViewTestWithMultipleFilters(TestCase):
             band=self.band2,
             disk=self.disk2,
             region=self.region2,
-            file="file2",
+            filepath="file2",
             is_viewable=True,
         )
 
@@ -339,7 +339,7 @@ class ViewTestWithNoResults(TestCase):
             band=self.band1,
             disk=self.disk1,
             region=self.region1,
-            file="file1",
+            filepath="file1",
             is_viewable=True,
         )
         self.data2 = Data.objects.create(
@@ -348,7 +348,7 @@ class ViewTestWithNoResults(TestCase):
             band=self.band2,
             disk=self.disk2,
             region=self.region2,
-            file="file2",
+            filepath="file2",
             is_viewable=True,
         )
 
