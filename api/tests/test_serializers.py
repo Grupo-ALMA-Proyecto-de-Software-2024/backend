@@ -24,7 +24,7 @@ class SerializerTest(TestCase):
             band=self.band,
             disk=self.disk,
             region=self.region,
-            file="file1",
+            filepath="file1",
             is_viewable=True,
         )
 
@@ -36,7 +36,7 @@ class SerializerTest(TestCase):
             "disk": "Disk1",
             "band": "Band1",
             "molecule": "Molecule1",
-            "file": self.data.file.url,
+            "filepath": self.data.filepath,
             "is_viewable": True,
         }
         self.assertEqual(serializer.data, expected_data)
@@ -55,7 +55,7 @@ class SerializerTest(TestCase):
                     "disk": "Disk1",
                     "band": "Band1",
                     "molecule": "Molecule1",
-                    "file": self.data.file.url,
+                    "filepath": self.data.filepath,
                     "is_viewable": True,
                 }
             ],
@@ -80,7 +80,7 @@ class SerializerTest(TestCase):
                             "disk": "Disk1",
                             "band": "Band1",
                             "molecule": "Molecule1",
-                            "file": self.data.file.url,
+                            "filepath": self.data.filepath,
                             "is_viewable": True,
                         }
                     ],
@@ -113,7 +113,7 @@ class SerializerTest(TestCase):
                                     "disk": "Disk1",
                                     "band": "Band1",
                                     "molecule": "Molecule1",
-                                    "file": self.data.file.url,
+                                    "filepath": self.data.filepath,
                                     "is_viewable": True,
                                 }
                             ],
@@ -156,7 +156,7 @@ class SerializerTest(TestCase):
                                             "disk": "Disk1",
                                             "band": "Band1",
                                             "molecule": "Molecule1",
-                                            "file": self.data.file.url,
+                                            "filepath": self.data.filepath,
                                             "is_viewable": True,
                                         }
                                     ],
