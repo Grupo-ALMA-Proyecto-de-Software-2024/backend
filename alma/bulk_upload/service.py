@@ -46,7 +46,7 @@ def populate_database(data: pd.DataFrame) -> None:
             band_name=row.banda,
             molecule_name=row.molecula,
             data_name=row.nombre_dato,
-            file_path=row.link_dato,
+            filepath=row.link_dato,
             is_viewable=row.visualizable,
         )
 

@@ -1,5 +1,3 @@
-from django.core.files import File
-
 from api import models
 
 
@@ -9,7 +7,7 @@ def create_data_from_names(
     band_name: str,
     molecule_name: str,
     data_name: str,
-    file_path: str,
+    filepath: str,
     is_viewable: bool,
 ) -> models.Data:
     # get or create region
@@ -30,7 +28,7 @@ def create_data_from_names(
         band=band,
         molecule=molecule,
         name=data_name,
-        file=File(open(file_path, "rb")),
+        filepath=filepath,
         is_viewable=is_viewable,
     )
     data.save()
