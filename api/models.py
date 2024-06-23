@@ -99,7 +99,7 @@ class Data(BaseDataModel):
     molecule = models.ForeignKey(
         Molecule, on_delete=models.CASCADE, related_name="data"
     )
-    filepath = models.CharField(max_length=255)
+    filepath = models.CharField(max_length=255, unique=True)
     is_viewable = models.BooleanField(default=False)
 
     class Meta:

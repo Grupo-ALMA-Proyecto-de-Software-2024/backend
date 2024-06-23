@@ -1,5 +1,7 @@
 from api import models
 
+from django.core.exceptions import ValidationError
+
 
 def create_data_from_names(
     region_name: str,
@@ -10,6 +12,9 @@ def create_data_from_names(
     filepath: str,
     is_viewable: bool,
 ) -> models.Data:
+    if models.Data.objects.filter(filepath=filepath).exists():
+        raise ValidationError(f"Data with filepath {filepath} already exists")
+
     # get or create region
     region, _ = models.Region.objects.get_or_create(name=region_name)
     disk, _ = models.Disk.objects.get_or_create(name=disk_name)

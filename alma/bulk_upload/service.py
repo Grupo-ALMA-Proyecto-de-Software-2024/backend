@@ -1,7 +1,12 @@
 import pandas as pd
 from django.core.files.uploadedfile import UploadedFile
+from django.core.exceptions import ValidationError
 
 from .crud import create_data_from_names
+
+
+class BulkUploadError(Exception):
+    pass
 
 
 EXPECTED_COLUMN_TYPES = {
@@ -30,25 +35,35 @@ def load_csv_file(datafile: UploadedFile) -> pd.DataFrame:
         if missing_columns:
             raise ValueError(f"Missing columns: {missing_columns}")
 
+        # strip all strings
+        for column in data.columns:
+            if data[column].dtype == "object":
+                data[column] = data[column].str.strip()
+
         data = data.astype(EXPECTED_COLUMN_TYPES)
 
     except Exception as e:
-        raise ValueError(f"Error loading CSV file: {e}")
+        raise BulkUploadError(f"Error loading CSV file: {e}")
 
     return data
 
 
 def populate_database(data: pd.DataFrame) -> None:
     for row in data.itertuples(index=False):
-        create_data_from_names(
-            region_name=row.region,
-            disk_name=row.disco,
-            band_name=row.banda,
-            molecule_name=row.molecula,
-            data_name=row.nombre_dato,
-            filepath=row.link_dato,
-            is_viewable=row.visualizable,
-        )
+        try:
+            create_data_from_names(
+                region_name=row.region,
+                disk_name=row.disco,
+                band_name=row.banda,
+                molecule_name=row.molecula,
+                data_name=row.nombre_dato,
+                filepath=row.link_dato,
+                is_viewable=row.visualizable,
+            )
+        except ValidationError as e:
+            raise BulkUploadError(f"Error creating data: {e}")
+        except Exception as e:
+            raise BulkUploadError(f"Error creating data: {e}")
 
 
 def process_csv_file(datafile: UploadedFile) -> None:
