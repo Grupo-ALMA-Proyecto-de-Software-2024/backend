@@ -14,10 +14,10 @@ export MAX_RETRIES=3
 # with the default settings we have 15 minutes to bring the dataportal service back up.
 export WAIT_SECS_BEFORE_RETRY=300
 # total size of files to be downloaded
-TOTAL_SIZE="{size}"
+TOTAL_SIZE="<<size>>"
 # the files to be downloaded
 LIST=("
-{links}
+<<links>>
 ")
 
 # If we terminate the script using CTRL-C during parallel downloads, the remainder of the script is executed, asking if

@@ -36,8 +36,10 @@ def generate_download_script(
     with open(template_path) as f:
         template = f.read()
 
-    links_str = " \\\n".join(links)
-    script = template.format(links=links_str, total_size=total_size_msg)
+    links_str = " \n".join(links)
+    script = template.replace("<<links>>", links_str).replace(
+        "<<size>>", total_size_msg
+    )
 
     with open(output_path, "w") as f:
         f.write(script)
