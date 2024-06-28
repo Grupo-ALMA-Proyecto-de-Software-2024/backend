@@ -33,3 +33,6 @@ poetry.lock
 
 # Editor directories
 .vscode/
+
+# Download Script Generator
+api/download_script_generator/download_data.sh
