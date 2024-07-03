@@ -92,7 +92,7 @@ function dl {
         local download_command=(wget -c -q -nv --timeout=${TIMEOUT_SECS} --tries=1)
     fi
 
-    debug_log "Starting download of $filename"
+    echo "Starting download of $filename"
     # manually retry downloads.
     until [ ${attempt_num} -ge ${MAX_RETRIES} ]; do
         debug_log "Running command: ${download_command[@]} \"$file\""
