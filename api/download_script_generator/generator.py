@@ -43,13 +43,3 @@ def generate_download_script(
 
     with open(output_path, "w") as f:
         f.write(script)
-
-
-generate_download_script(
-    links=[
-        "ftp://ftp.cv.nrao.edu/NRAO-staff/rloomis/MAPS/HD_163296/images/13CO/robust_0.5/HD_163296_13CO_110GHz.robust_0.5.JvMcorr.image.pbcor.fits",
-        "ftp://ftp.cv.nrao.edu/NRAO-staff/rloomis/MAPS/HD_163296/images/13CO/robust_0.5/HD_163296_13CO_220GHz.robust_0.5.image.pbcor.fits",
-        "ftp://ftp.cv.nrao.edu/NRAO-staff/rloomis/MAPS/HD_163296/images/13CO/robust_0.5/HD_163296_13CO_220GHz.robust_0.5.JvMcorr.image.fits ",
-    ],
-    total_size_msg="Total size: <X> MB",
-)
