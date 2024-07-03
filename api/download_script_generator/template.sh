@@ -16,9 +16,15 @@ export WAIT_SECS_BEFORE_RETRY=300
 # total size of files to be downloaded
 TOTAL_SIZE="<<size>>"
 # the files to be downloaded
-LIST=("
-<<links>>
-")
+LIST=(
+    "<<links>>"
+)
+
+# Cache file to keep track of downloaded files
+export CACHE_FILE="downloaded_files_cache.txt"
+
+# Debug mode
+export DEBUG=false
 
 # If we terminate the script using CTRL-C during parallel downloads, the remainder of the script is executed, asking if
 # the user wants to unpack tar files. Not very nice. Exit the whole script when the user hits CTRL-C.
@@ -26,13 +32,54 @@ trap "exit" INT
 
 export failed_downloads=0
 
+# Function to log commands if DEBUG is true
+function debug_log {
+    if [ "$DEBUG" = true ]; then
+        echo "$@"
+    fi
+}
+export -f debug_log
+
+# Function to create cache file if it doesn't exist
+function create_cache_file {
+    if [ ! -f "${CACHE_FILE}" ]; then
+        touch "${CACHE_FILE}"
+        debug_log "Created cache file: ${CACHE_FILE}"
+    fi
+}
+export -f create_cache_file
+
+# Function to read cache
+function read_cache {
+    debug_log "Reading cache file: ${CACHE_FILE}"
+    if [ -f "${CACHE_FILE}" ]; then
+        cat "${CACHE_FILE}"
+    fi
+}
+export -f read_cache
+
+# Function to update cache
+function update_cache {
+    local file=$1
+    echo "$file" >>"${CACHE_FILE}"
+    debug_log "Updated cache file with: $file"
+}
+export -f update_cache
+
 # download a single file.
 # attempt the download up to N times
 function dl {
     local file=$1
-    local filename=$(basename $file)
+    local filename=$(basename "$file")
     # the nth attempt to download a single file
     local attempt_num=0
+
+    debug_log "Checking if file $file is already downloaded"
+    # Check if the file is already downloaded
+    if grep -q "$file" "${CACHE_FILE}"; then
+        echo "File $filename already downloaded. Skipping."
+        return 0
+    fi
 
     # wait for some time before starting - this is to stagger the load on the server (download start-up is relatively expensive)
     sleep $((($RANDOM % 10) + 2))s
@@ -45,17 +92,15 @@ function dl {
         local download_command=(wget -c -q -nv --timeout=${TIMEOUT_SECS} --tries=1)
     fi
 
+    debug_log "Starting download of $filename"
     # manually retry downloads.
-    # I know wget and curl can both do this, but curl (as of 10.04.2018) will not allow retry and resume. I want consistent behaviour so
-    # we implement the retry mechanism ourselves.
-    echo "starting download of $filename"
     until [ ${attempt_num} -ge ${MAX_RETRIES} ]; do
-        # echo "${download_command[@]}" "$file"
-        $("${download_command[@]}" "$file")
+        debug_log "Running command: ${download_command[@]} \"$file\""
+        "${download_command[@]}" "$file"
         status=$?
-        # echo "status ${status}"
         if [ ${status} -eq 0 ]; then
             echo "	    successfully downloaded $filename"
+            update_cache "$file"
             break
         else
             failed_downloads=1
@@ -82,47 +127,53 @@ export long_files=()
 # array of filenames with length <= 255 characters - can be downloaded in parallel.
 export ok_files=()
 function split_files_list {
-    for nextfile in ${LIST}; do
+    for nextfile in "${LIST[@]}"; do
         length=${#nextfile}
         if [[ $length -ge 251 ]]; then
-            long_files+=($nextfile)
+            long_files+=("$nextfile")
         else
-            ok_files+=($nextfile)
+            ok_files+=("$nextfile")
         fi
     done
+    debug_log "Split files into ok_files: ${ok_files[@]} and long_files: ${long_files[@]}"
 }
+export -f split_files_list
 
 function download_files {
     split_files_list
-    # "dl" is a function for downloading. I abbreviated the name to leave more space for the filename
-    echo ${ok_files[@]} | tr \  \\n | xargs -P5 -n1 -I '{}' bash -c 'dl {};'
-    for next_file in ${long_files[@]}; do
-        dl ${next_file}
+    debug_log "Downloading files in parallel"
+    printf "%s\n" "${ok_files[@]}" | xargs -P5 -n1 bash -c 'dl "$@"' _
+    for next_file in "${long_files[@]}"; do
+        dl "${next_file}"
     done
 }
+export -f download_files
 
 function check_download_tool {
     if ! (command -v "wget" >/dev/null 2>&1 || command -v "curl" >/dev/null 2>&1); then
         echo "ERROR: neither 'wget' nor 'curl' are available on your computer. Please install one of them."
         exit 1
     fi
+    debug_log "Checked download tools: wget and curl"
 }
+export -f check_download_tool
 
 function print_download_info {
     echo "Downloading the following files in up to 5 parallel streams. Total size is ${TOTAL_SIZE}."
-    echo "${LIST}"
+    for file in "${LIST[@]}"; do
+        echo "$file"
+    done
     echo "In case of errors each download will be automatically resumed up to 3 times after a 5 minute delay"
     echo "To manually resume interrupted downloads just re-run the script."
-    # tr converts spaces into newlines. Written legibly (spaces replaced by '_') we have: tr "\_"_"\\n"
-    # IMPORTANT. Please do not increase the parallelism. This may result in your downloads being throttled.
-    # Please do not split downloads of a single file into multiple parallel pieces.
-    echo "your downloads will start shortly...."
+    echo "Your downloads will start shortly...."
 }
+export -f print_download_info
 
 # Main body
 # ---------
 
 check_download_tool
+create_cache_file
 print_download_info
 download_files
 

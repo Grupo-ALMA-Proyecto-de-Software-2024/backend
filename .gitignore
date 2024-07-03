@@ -36,3 +36,4 @@ poetry.lock
 
 # Download Script Generator
 api/download_script_generator/download_data.sh
+api/download_script_generator/downloaded_files_cache.txt
