@@ -18,6 +18,7 @@ class DataSerializer(serializers.ModelSerializer):
             "molecule",
             "filepath",
             "image_link",
+            "size_in_mb",
         ]
 
     def get_region(self, obj):

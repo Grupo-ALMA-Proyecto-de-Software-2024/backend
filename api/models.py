@@ -99,8 +99,11 @@ class Data(BaseDataModel):
     molecule = models.ForeignKey(
         Molecule, on_delete=models.CASCADE, related_name="data"
     )
-    filepath = models.CharField(max_length=255, unique=True)
-    image_link = models.TextField(blank=True, null=True)
+    filepath = models.CharField(
+        max_length=255, unique=True, verbose_name="Link to Data"
+    )
+    image_link = models.TextField(blank=True, null=True, verbose_name="Image Link")
+    size_in_mb = models.FloatField(blank=True, null=True, verbose_name="Size (MB)")
 
     class Meta:
         verbose_name_plural = "Data"

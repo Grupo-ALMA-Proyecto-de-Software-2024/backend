@@ -26,6 +26,7 @@ class ViewNoQueryParamsTest(TestCase):
             region=self.region,
             filepath="file1",
             image_link="http://example.com/image.png",
+            size_in_mb=1.0,
         )
 
     def test_region_view(self):
@@ -100,6 +101,7 @@ class ViewTestWithQueryParams(TestCase):
             region=self.region1,
             filepath="file1",
             image_link="http://example.com/image.png",
+            size_in_mb=1.0,
         )
         self.data2 = Data.objects.create(
             name="Data2",
@@ -109,6 +111,7 @@ class ViewTestWithQueryParams(TestCase):
             region=self.region2,
             filepath="file2",
             image_link="http://example.com/image.png",
+            size_in_mb=2.0,
         )
 
     def test_region_view_with_filter(self):
@@ -161,6 +164,11 @@ class ViewTestWithQueryParams(TestCase):
         self.assertIn("data", response.data)
         self.assertEqual(len(response.data["data"]), 1)
         self.assertEqual(response.data["data"][0]["name"], "Data1")
+        self.assertEqual(response.data["data"][0]["size_in_mb"], 1.0)
+        self.assertEqual(
+            response.data["data"][0]["image_link"], "http://example.com/image.png"
+        )
+        self.assertEqual(response.data["data"][0]["filepath"], "file1")
 
 
 class ViewTestWithMultipleFilters(TestCase):
@@ -189,6 +197,7 @@ class ViewTestWithMultipleFilters(TestCase):
             region=self.region1,
             filepath="file1",
             image_link="http://example.com/image.png",
+            size_in_mb=1.0,
         )
         self.data2 = Data.objects.create(
             name="Data2",
@@ -198,6 +207,7 @@ class ViewTestWithMultipleFilters(TestCase):
             region=self.region2,
             filepath="file2",
             image_link="http://example.com/image.png",
+            size_in_mb=2.0,
         )
 
     def test_region_view_with_multiple_filters(self):
@@ -260,6 +270,8 @@ class ViewTestWithMultipleFilters(TestCase):
         self.assertEqual(len(response.data["data"]), 2)
         self.assertEqual(response.data["data"][0]["name"], "Data1")
         self.assertEqual(response.data["data"][1]["name"], "Data2")
+        self.assertEqual(response.data["data"][0]["size_in_mb"], 1.0)
+        self.assertEqual(response.data["data"][1]["size_in_mb"], 2.0)
 
     def test_region_view_with_filter_and_a_non_existent_region(self):
         url = reverse("regions") + "?region=Region1&region=Region3"
@@ -311,6 +323,7 @@ class ViewTestWithMultipleFilters(TestCase):
         self.assertIn("data", response.data)
         self.assertEqual(len(response.data["data"]), 1)
         self.assertEqual(response.data["data"][0]["name"], "Data1")
+        self.assertEqual(response.data["data"][0]["size_in_mb"], 1.0)
 
 
 class ViewTestWithNoResults(TestCase):
@@ -339,6 +352,7 @@ class ViewTestWithNoResults(TestCase):
             region=self.region1,
             filepath="file1",
             image_link="http://example.com/image.png",
+            size_in_mb=1.0,
         )
         self.data2 = Data.objects.create(
             name="Data2",
@@ -348,6 +362,7 @@ class ViewTestWithNoResults(TestCase):
             region=self.region2,
             filepath="file2",
             image_link="http://example.com/image.png",
+            size_in_mb=2.0,
         )
 
     def test_region_view_no_results(self):
