@@ -1,3 +1,5 @@
+from typing import Optional
+
 from api import models
 
 from django.core.exceptions import ValidationError
@@ -10,7 +12,8 @@ def create_data_from_names(
     molecule_name: str,
     data_name: str,
     filepath: str,
-    is_viewable: bool,
+    image_link: Optional[str] = None,
+    size_in_mb: Optional[float] = None,
 ) -> models.Data:
     if models.Data.objects.filter(filepath=filepath).exists():
         raise ValidationError(f"Data with filepath {filepath} already exists")
@@ -34,7 +37,8 @@ def create_data_from_names(
         molecule=molecule,
         name=data_name,
         filepath=filepath,
-        is_viewable=is_viewable,
+        image_link=image_link,
+        size_in_mb=size_in_mb,
     )
     data.save()
     return data
