@@ -25,7 +25,7 @@ class ViewNoQueryParamsTest(TestCase):
             disk=self.disk,
             region=self.region,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
         )
 
     def test_region_view(self):
@@ -33,10 +33,8 @@ class ViewNoQueryParamsTest(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn(
-            "regions", response.data
-        )  # Check if 'regions' is part of the response
-        self.assertEqual(len(response.data["regions"]), 1)  # Assuming 1 region
+        self.assertIn("regions", response.data)
+        self.assertEqual(len(response.data["regions"]), 1)
         self.assertEqual(response.data["regions"][0]["name"], "Region1")
 
     def test_disk_view(self):
@@ -101,7 +99,7 @@ class ViewTestWithQueryParams(TestCase):
             disk=self.disk1,
             region=self.region1,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
         )
         self.data2 = Data.objects.create(
             name="Data2",
@@ -110,7 +108,7 @@ class ViewTestWithQueryParams(TestCase):
             disk=self.disk2,
             region=self.region2,
             filepath="file2",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
         )
 
     def test_region_view_with_filter(self):
@@ -190,7 +188,7 @@ class ViewTestWithMultipleFilters(TestCase):
             disk=self.disk1,
             region=self.region1,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
         )
         self.data2 = Data.objects.create(
             name="Data2",
@@ -199,7 +197,7 @@ class ViewTestWithMultipleFilters(TestCase):
             disk=self.disk2,
             region=self.region2,
             filepath="file2",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
         )
 
     def test_region_view_with_multiple_filters(self):
@@ -340,7 +338,7 @@ class ViewTestWithNoResults(TestCase):
             disk=self.disk1,
             region=self.region1,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
         )
         self.data2 = Data.objects.create(
             name="Data2",
@@ -349,7 +347,7 @@ class ViewTestWithNoResults(TestCase):
             disk=self.disk2,
             region=self.region2,
             filepath="file2",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
         )
 
     def test_region_view_no_results(self):

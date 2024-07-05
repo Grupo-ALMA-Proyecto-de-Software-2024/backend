@@ -25,7 +25,7 @@ class SerializerTest(TestCase):
             disk=self.disk,
             region=self.region,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",  # Changed to use `image_link`
         )
 
     def test_data_serializer(self):
@@ -37,7 +37,7 @@ class SerializerTest(TestCase):
             "band": "Band1",
             "molecule": "Molecule1",
             "filepath": self.data.filepath,
-            "is_viewable": True,
+            "image_link": "http://example.com/image.png",  # Updated to check `image_link`
         }
         self.assertEqual(serializer.data, expected_data)
 
@@ -56,7 +56,7 @@ class SerializerTest(TestCase):
                     "band": "Band1",
                     "molecule": "Molecule1",
                     "filepath": self.data.filepath,
-                    "is_viewable": True,
+                    "image_link": "http://example.com/image.png",  # Updated to include `image_link`
                 }
             ],
         }
@@ -81,7 +81,7 @@ class SerializerTest(TestCase):
                             "band": "Band1",
                             "molecule": "Molecule1",
                             "filepath": self.data.filepath,
-                            "is_viewable": True,
+                            "image_link": "http://example.com/image.png",  # Updated to use `image_link`
                         }
                     ],
                 }
@@ -114,7 +114,7 @@ class SerializerTest(TestCase):
                                     "band": "Band1",
                                     "molecule": "Molecule1",
                                     "filepath": self.data.filepath,
-                                    "is_viewable": True,
+                                    "image_link": "http://example.com/image.png",  # Updated to use `image_link`
                                 }
                             ],
                         }
@@ -157,7 +157,7 @@ class SerializerTest(TestCase):
                                             "band": "Band1",
                                             "molecule": "Molecule1",
                                             "filepath": self.data.filepath,
-                                            "is_viewable": True,
+                                            "image_link": "http://example.com/image.png",  # Updated to use `image_link`
                                         }
                                     ],
                                 }

@@ -100,7 +100,7 @@ class Data(BaseDataModel):
         Molecule, on_delete=models.CASCADE, related_name="data"
     )
     filepath = models.CharField(max_length=255, unique=True)
-    is_viewable = models.BooleanField(default=False)
+    image_link = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Data"

@@ -17,7 +17,7 @@ class DataSerializer(serializers.ModelSerializer):
             "band",
             "molecule",
             "filepath",
-            "is_viewable",
+            "image_link",
         ]
 
     def get_region(self, obj):
