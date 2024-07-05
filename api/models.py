@@ -23,11 +23,14 @@ class BaseDataModel(models.Model):
 class Region(BaseDataModel):
     """A region in the galaxy."""
 
+    description = models.TextField(blank=True, null=True)
+
 
 class Disk(BaseDataModel):
     """A disk in a region of the galaxy."""
 
     regions = models.ManyToManyField(Region, related_name="disks")
+    features = models.JSONField(default=dict)
 
     @classmethod
     def filter_disks(
