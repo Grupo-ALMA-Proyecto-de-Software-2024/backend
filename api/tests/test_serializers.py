@@ -55,18 +55,6 @@ class SerializerTest(TestCase):
             "creation_date": self.molecule.creation_date.isoformat().replace(
                 "+00:00", "Z"
             ),
-            "data": [
-                {
-                    "name": "Data1",
-                    "region": "Region1",
-                    "disk": "Disk1",
-                    "band": "Band1",
-                    "molecule": "Molecule1",
-                    "filepath": self.data.filepath,
-                    "image_link": "http://example.com/image.png",
-                    "size_in_mb": 1.0,
-                }
-            ],
         }
         self.assertEqual(serializer.data, expected_data)
 
@@ -75,26 +63,6 @@ class SerializerTest(TestCase):
         expected_data = {
             "name": "Band1",
             "creation_date": self.band.creation_date.isoformat().replace("+00:00", "Z"),
-            "molecules": [
-                {
-                    "name": "Molecule1",
-                    "creation_date": self.molecule.creation_date.isoformat().replace(
-                        "+00:00", "Z"
-                    ),
-                    "data": [
-                        {
-                            "name": "Data1",
-                            "region": "Region1",
-                            "disk": "Disk1",
-                            "band": "Band1",
-                            "molecule": "Molecule1",
-                            "filepath": self.data.filepath,
-                            "image_link": "http://example.com/image.png",
-                            "size_in_mb": 1.0,
-                        }
-                    ],
-                }
-            ],
         }
         self.assertEqual(serializer.data, expected_data)
 
@@ -103,34 +71,6 @@ class SerializerTest(TestCase):
         expected_data = {
             "name": "Disk1",
             "creation_date": self.disk.creation_date.isoformat().replace("+00:00", "Z"),
-            "bands": [
-                {
-                    "name": "Band1",
-                    "creation_date": self.band.creation_date.isoformat().replace(
-                        "+00:00", "Z"
-                    ),
-                    "molecules": [
-                        {
-                            "name": "Molecule1",
-                            "creation_date": self.molecule.creation_date.isoformat().replace(
-                                "+00:00", "Z"
-                            ),
-                            "data": [
-                                {
-                                    "name": "Data1",
-                                    "region": "Region1",
-                                    "disk": "Disk1",
-                                    "band": "Band1",
-                                    "molecule": "Molecule1",
-                                    "filepath": self.data.filepath,
-                                    "image_link": "http://example.com/image.png",
-                                    "size_in_mb": 1.0,
-                                }
-                            ],
-                        }
-                    ],
-                }
-            ],
             "features": {"key1": "value1", "key2": "value2"},
         }
         self.assertEqual(serializer.data, expected_data)
@@ -143,42 +83,5 @@ class SerializerTest(TestCase):
             "creation_date": self.region.creation_date.isoformat().replace(
                 "+00:00", "Z"
             ),
-            "disks": [
-                {
-                    "name": "Disk1",
-                    "creation_date": self.disk.creation_date.isoformat().replace(
-                        "+00:00", "Z"
-                    ),
-                    "bands": [
-                        {
-                            "name": "Band1",
-                            "creation_date": self.band.creation_date.isoformat().replace(
-                                "+00:00", "Z"
-                            ),
-                            "molecules": [
-                                {
-                                    "name": "Molecule1",
-                                    "creation_date": self.molecule.creation_date.isoformat().replace(
-                                        "+00:00", "Z"
-                                    ),
-                                    "data": [
-                                        {
-                                            "name": "Data1",
-                                            "region": "Region1",
-                                            "disk": "Disk1",
-                                            "band": "Band1",
-                                            "molecule": "Molecule1",
-                                            "filepath": self.data.filepath,
-                                            "image_link": "http://example.com/image.png",
-                                            "size_in_mb": 1.0,
-                                        }
-                                    ],
-                                }
-                            ],
-                        }
-                    ],
-                    "features": {"key1": "value1", "key2": "value2"},
-                }
-            ],
         }
         self.assertEqual(serializer.data, expected_data)
