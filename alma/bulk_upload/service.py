@@ -1,8 +1,13 @@
+import logging
+
 import pandas as pd
 from django.core.files.uploadedfile import UploadedFile
 from django.core.exceptions import ValidationError
 
 from .crud import create_data_from_names
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class BulkUploadError(Exception):
@@ -16,7 +21,8 @@ EXPECTED_COLUMN_TYPES = {
     "molecula": str,
     "nombre_dato": str,
     "link_dato": str,
-    "visualizable": bool,
+    "link_imagen": str,
+    "tamaño_mb": float,
 }
 
 
@@ -58,7 +64,8 @@ def populate_database(data: pd.DataFrame) -> None:
                 molecule_name=row.molecula,
                 data_name=row.nombre_dato,
                 filepath=row.link_dato,
-                is_viewable=row.visualizable,
+                image_link=row.link_imagen,
+                size_in_mb=row.tamaño_mb,
             )
         except ValidationError as e:
             raise BulkUploadError(f"Error creating data: {e}")
@@ -67,7 +74,8 @@ def populate_database(data: pd.DataFrame) -> None:
 
 
 def process_csv_file(datafile: UploadedFile) -> None:
-    print("Processing zip file!!!!!!!!!!!")
+    LOGGER.info("Processing zip file")
     data = load_csv_file(datafile)
+    LOGGER.info("Populating database")
     populate_database(data)
-    print("Populated database!!!!!!!!!!!")
+    LOGGER.info("Database populated")

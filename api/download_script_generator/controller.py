@@ -31,9 +31,7 @@ class DownloadScriptGeneratorView(APIView):
                     {"error": "Links are required."}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            script_url = generate_download_script_service(
-                links=links, total_size_msg="Total size: <X> MB"
-            )
+            script_url = generate_download_script_service(links=links)
             absolute_script_url = request.build_absolute_uri(
                 f"{settings.MEDIA_URL}{script_url}"
             )

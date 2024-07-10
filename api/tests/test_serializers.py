@@ -11,8 +11,13 @@ from ..serializers import (
 
 class SerializerTest(TestCase):
     def setUp(self):
-        self.region = Region.objects.create(name="Region1")
-        self.disk = Disk.objects.create(name="Disk1")
+        self.region = Region.objects.create(
+            name="Region1",
+            description="Description1",
+        )
+        self.disk = Disk.objects.create(
+            name="Disk1", features={"key1": "value1", "key2": "value2"}
+        )
         self.disk.regions.add(self.region)
         self.band = Band.objects.create(name="Band1")
         self.band.disks.add(self.disk)
@@ -25,7 +30,8 @@ class SerializerTest(TestCase):
             disk=self.disk,
             region=self.region,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
+            size_in_mb=1.0,
         )
 
     def test_data_serializer(self):
@@ -37,7 +43,8 @@ class SerializerTest(TestCase):
             "band": "Band1",
             "molecule": "Molecule1",
             "filepath": self.data.filepath,
-            "is_viewable": True,
+            "image_link": "http://example.com/image.png",
+            "size_in_mb": 1.0,
         }
         self.assertEqual(serializer.data, expected_data)
 
@@ -56,7 +63,8 @@ class SerializerTest(TestCase):
                     "band": "Band1",
                     "molecule": "Molecule1",
                     "filepath": self.data.filepath,
-                    "is_viewable": True,
+                    "image_link": "http://example.com/image.png",
+                    "size_in_mb": 1.0,
                 }
             ],
         }
@@ -81,7 +89,8 @@ class SerializerTest(TestCase):
                             "band": "Band1",
                             "molecule": "Molecule1",
                             "filepath": self.data.filepath,
-                            "is_viewable": True,
+                            "image_link": "http://example.com/image.png",
+                            "size_in_mb": 1.0,
                         }
                     ],
                 }
@@ -114,13 +123,15 @@ class SerializerTest(TestCase):
                                     "band": "Band1",
                                     "molecule": "Molecule1",
                                     "filepath": self.data.filepath,
-                                    "is_viewable": True,
+                                    "image_link": "http://example.com/image.png",
+                                    "size_in_mb": 1.0,
                                 }
                             ],
                         }
                     ],
                 }
             ],
+            "features": {"key1": "value1", "key2": "value2"},
         }
         self.assertEqual(serializer.data, expected_data)
 
@@ -128,6 +139,7 @@ class SerializerTest(TestCase):
         serializer = RegionSerializer(instance=self.region)
         expected_data = {
             "name": "Region1",
+            "description": "Description1",
             "creation_date": self.region.creation_date.isoformat().replace(
                 "+00:00", "Z"
             ),
@@ -157,13 +169,15 @@ class SerializerTest(TestCase):
                                             "band": "Band1",
                                             "molecule": "Molecule1",
                                             "filepath": self.data.filepath,
-                                            "is_viewable": True,
+                                            "image_link": "http://example.com/image.png",
+                                            "size_in_mb": 1.0,
                                         }
                                     ],
                                 }
                             ],
                         }
                     ],
+                    "features": {"key1": "value1", "key2": "value2"},
                 }
             ],
         }

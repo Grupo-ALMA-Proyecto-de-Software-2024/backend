@@ -17,7 +17,8 @@ class DataSerializer(serializers.ModelSerializer):
             "band",
             "molecule",
             "filepath",
-            "is_viewable",
+            "image_link",
+            "size_in_mb",
         ]
 
     def get_region(self, obj):
@@ -54,7 +55,7 @@ class DiskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Disk
-        fields = ["name", "creation_date", "bands"]
+        fields = ["name", "creation_date", "bands", "features"]
 
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -62,4 +63,4 @@ class RegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Region
-        fields = ["name", "creation_date", "disks"]
+        fields = ["name", "creation_date", "disks", "description"]

@@ -23,11 +23,14 @@ class BaseDataModel(models.Model):
 class Region(BaseDataModel):
     """A region in the galaxy."""
 
+    description = models.TextField(blank=True, null=True)
+
 
 class Disk(BaseDataModel):
     """A disk in a region of the galaxy."""
 
     regions = models.ManyToManyField(Region, related_name="disks")
+    features = models.JSONField(default=dict)
 
     @classmethod
     def filter_disks(
@@ -99,8 +102,11 @@ class Data(BaseDataModel):
     molecule = models.ForeignKey(
         Molecule, on_delete=models.CASCADE, related_name="data"
     )
-    filepath = models.CharField(max_length=255, unique=True)
-    is_viewable = models.BooleanField(default=False)
+    filepath = models.CharField(
+        max_length=255, unique=True, verbose_name="Link to Data"
+    )
+    image_link = models.TextField(blank=True, null=True, verbose_name="Image Link")
+    size_in_mb = models.FloatField(blank=True, null=True, verbose_name="Size (MB)")
 
     class Meta:
         verbose_name_plural = "Data"

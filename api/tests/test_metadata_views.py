@@ -25,7 +25,8 @@ class ViewNoQueryParamsTest(TestCase):
             disk=self.disk,
             region=self.region,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
+            size_in_mb=1.0,
         )
 
     def test_region_view(self):
@@ -33,10 +34,8 @@ class ViewNoQueryParamsTest(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn(
-            "regions", response.data
-        )  # Check if 'regions' is part of the response
-        self.assertEqual(len(response.data["regions"]), 1)  # Assuming 1 region
+        self.assertIn("regions", response.data)
+        self.assertEqual(len(response.data["regions"]), 1)
         self.assertEqual(response.data["regions"][0]["name"], "Region1")
 
     def test_disk_view(self):
@@ -101,7 +100,8 @@ class ViewTestWithQueryParams(TestCase):
             disk=self.disk1,
             region=self.region1,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
+            size_in_mb=1.0,
         )
         self.data2 = Data.objects.create(
             name="Data2",
@@ -110,7 +110,8 @@ class ViewTestWithQueryParams(TestCase):
             disk=self.disk2,
             region=self.region2,
             filepath="file2",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
+            size_in_mb=2.0,
         )
 
     def test_region_view_with_filter(self):
@@ -163,6 +164,11 @@ class ViewTestWithQueryParams(TestCase):
         self.assertIn("data", response.data)
         self.assertEqual(len(response.data["data"]), 1)
         self.assertEqual(response.data["data"][0]["name"], "Data1")
+        self.assertEqual(response.data["data"][0]["size_in_mb"], 1.0)
+        self.assertEqual(
+            response.data["data"][0]["image_link"], "http://example.com/image.png"
+        )
+        self.assertEqual(response.data["data"][0]["filepath"], "file1")
 
 
 class ViewTestWithMultipleFilters(TestCase):
@@ -190,7 +196,8 @@ class ViewTestWithMultipleFilters(TestCase):
             disk=self.disk1,
             region=self.region1,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
+            size_in_mb=1.0,
         )
         self.data2 = Data.objects.create(
             name="Data2",
@@ -199,7 +206,8 @@ class ViewTestWithMultipleFilters(TestCase):
             disk=self.disk2,
             region=self.region2,
             filepath="file2",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
+            size_in_mb=2.0,
         )
 
     def test_region_view_with_multiple_filters(self):
@@ -262,6 +270,8 @@ class ViewTestWithMultipleFilters(TestCase):
         self.assertEqual(len(response.data["data"]), 2)
         self.assertEqual(response.data["data"][0]["name"], "Data1")
         self.assertEqual(response.data["data"][1]["name"], "Data2")
+        self.assertEqual(response.data["data"][0]["size_in_mb"], 1.0)
+        self.assertEqual(response.data["data"][1]["size_in_mb"], 2.0)
 
     def test_region_view_with_filter_and_a_non_existent_region(self):
         url = reverse("regions") + "?region=Region1&region=Region3"
@@ -313,6 +323,7 @@ class ViewTestWithMultipleFilters(TestCase):
         self.assertIn("data", response.data)
         self.assertEqual(len(response.data["data"]), 1)
         self.assertEqual(response.data["data"][0]["name"], "Data1")
+        self.assertEqual(response.data["data"][0]["size_in_mb"], 1.0)
 
 
 class ViewTestWithNoResults(TestCase):
@@ -340,7 +351,8 @@ class ViewTestWithNoResults(TestCase):
             disk=self.disk1,
             region=self.region1,
             filepath="file1",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
+            size_in_mb=1.0,
         )
         self.data2 = Data.objects.create(
             name="Data2",
@@ -349,7 +361,8 @@ class ViewTestWithNoResults(TestCase):
             disk=self.disk2,
             region=self.region2,
             filepath="file2",
-            is_viewable=True,
+            image_link="http://example.com/image.png",
+            size_in_mb=2.0,
         )
 
     def test_region_view_no_results(self):
@@ -397,3 +410,47 @@ class ViewTestWithNoResults(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("data", response.data)
         self.assertEqual(len(response.data["data"]), 0)
+
+
+class ViewTestDescriptionFields(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+        self.region = Region.objects.create(name="Region1", description="Description1")
+        self.disk1 = Disk.objects.create(
+            name="Disk1", features={"feature1": "value1", "feature2": "value2"}
+        )
+        self.disk2 = Disk.objects.create(
+            name="Disk2", features={"feature1": "value3", "feature2": "value4"}
+        )
+
+        self.disk1.regions.add(self.region)
+        self.disk2.regions.add(self.region)
+
+    def test_region_view_with_description(self):
+        url = reverse("regions")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("regions", response.data)
+        self.assertEqual(len(response.data["regions"]), 1)
+        self.assertEqual(response.data["regions"][0]["name"], "Region1")
+        self.assertEqual(response.data["regions"][0]["description"], "Description1")
+
+    def test_disk_view_with_features(self):
+        url = reverse("disks")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("disks", response.data)
+        self.assertEqual(len(response.data["disks"]), 2)
+        self.assertEqual(response.data["disks"][0]["name"], "Disk1")
+        self.assertEqual(
+            response.data["disks"][0]["features"],
+            {"feature1": "value1", "feature2": "value2"},
+        )
+        self.assertEqual(response.data["disks"][1]["name"], "Disk2")
+        self.assertEqual(
+            response.data["disks"][1]["features"],
+            {"feature1": "value3", "feature2": "value4"},
+        )
