@@ -56,6 +56,7 @@ update_cache() {
 }
 export -f update_cache
 
+declare -A url_to_filename
 # Function to download a single file with retries
 dl() {
     local file=$1
@@ -97,6 +98,7 @@ dl() {
         if [ ${status} -eq 0 ]; then
             echo "Successfully downloaded $filename"
             update_cache "$file"
+            url_to_filename["$file"]="$filename"
             break
         else
             failed_downloads=1
@@ -168,4 +170,13 @@ check_download_tool
 create_cache_file
 print_download_info
 download_files
-echo "Done."
+
+echo "Creating Directories..."
+
+"<<create_directories_command>>"
+
+echo "Moving Files..."
+
+"<<move_files_command>>"
+
+echo "Download script execution completed."

@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+
 LOGGER = logging.getLogger(__name__)
 
 SCRIPT_GENERATOR_DIR = Path(__file__).parent.resolve()
@@ -11,6 +12,8 @@ OUTPUT_PATH = SCRIPT_GENERATOR_DIR / "download_data.sh"
 def generate_download_script(
     links: list[str],
     total_size_msg: str,
+    mkdir_commands: list[str],
+    mv_commands: list[str],
     template_path: Path | str = TEMPLATE_PATH,
     output_path: Path | str = OUTPUT_PATH,
 ) -> None:
@@ -37,8 +40,13 @@ def generate_download_script(
         template = f.read()
 
     links_str = "\n".join([f'"{link}"' for link in links])
-    script = template.replace('    "<<links>>"', links_str).replace(
-        "<<size>>", total_size_msg
+    mkdir_commands_str = "\n".join(mkdir_commands)
+    mv_commands_str = "\n".join(mv_commands)
+    script = (
+        template.replace('    "<<links>>"', links_str)
+        .replace("<<size>>", total_size_msg)
+        .replace('"<<create_directories_command>>"', mkdir_commands_str)
+        .replace('"<<move_files_command>>"', mv_commands_str)
     )
 
     with open(output_path, "w") as f:
