@@ -30,7 +30,7 @@ class Disk(BaseDataModel):
     """A disk in a region of the galaxy."""
 
     regions = models.ManyToManyField(Region, related_name="disks")
-    features = models.JSONField(default=dict)
+    features = models.JSONField(default=dict, blank=True)
 
     @classmethod
     def filter_disks(
