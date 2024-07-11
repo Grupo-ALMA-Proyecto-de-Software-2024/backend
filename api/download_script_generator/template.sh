@@ -12,7 +12,7 @@ export DEBUG=false
 
 # Parameters
 TOTAL_SIZE="<<size>>"
-LIST=(
+LINKS_LIST=(
     "<<links>>"
 )
 
@@ -118,7 +118,7 @@ export -f dl
 split_files_list() {
     export long_files=()
     export ok_files=()
-    for nextfile in "${LIST[@]}"; do
+    for nextfile in "${LINKS_LIST[@]}"; do
         local length=${#nextfile}
         if [[ $length -ge 251 ]]; then
             long_files+=("$nextfile")
@@ -154,7 +154,7 @@ export -f check_download_tool
 # Function to print download info
 print_download_info() {
     echo "Downloading the following files in up to 5 parallel streams. Total size is ${TOTAL_SIZE}."
-    for file in "${LIST[@]}"; do
+    for file in "${LINKS_LIST[@]}"; do
         echo "$file"
     done
     echo "In case of errors each download will be automatically resumed up to 3 times after a 5 minute delay."
