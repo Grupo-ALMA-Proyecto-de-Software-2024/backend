@@ -65,29 +65,17 @@ def generate_download_script_service(links: list[str]) -> str:
         else f"Total size: At least {size_in_mb_to_human_readable(total_size_in_mb)}"
     )
 
-    # Building mkdir and mv commands
-    mkdir_commands = [
-        'mkdir -p "{base_dir}/{dirs}"'.format(
-            base_dir=BASE_FOLDER_DOWNLOAD_NAME,
-            dirs=make_data_item_folder_string(data),
-        )
+    links_to_targets = {
+        data.filepath: f"{BASE_FOLDER_DOWNLOAD_NAME}/{make_data_item_folder_string(data)}"
         for data in data_items
-    ]
-    mv_commands = [
-        'mv "${{url_to_filename[\\"{link}\\"]}}" "{base_dir}/{dirs}"'.format(
-            link=data.filepath,
-            base_dir=BASE_FOLDER_DOWNLOAD_NAME,
-            dirs=make_data_item_folder_string(data),
-        )
-        for data in data_items
-    ]
+    }
+
+    print(links_to_targets)
 
     output_script_path = SCRIPTS_DIR / generate_unique_filename()
     generate_download_script(
-        links=download_links,
+        url_to_dir_mapping=links_to_targets,
         total_size_msg=total_size_msg,
-        mkdir_commands=mkdir_commands,
-        mv_commands=mv_commands,
         template_path=SCRIPT_TEMPLATE_PATH,
         output_path=output_script_path,
     )

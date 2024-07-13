@@ -10,10 +10,8 @@ OUTPUT_PATH = SCRIPT_GENERATOR_DIR / "download_data.sh"
 
 
 def generate_download_script(
-    links: list[str],
+    url_to_dir_mapping: dict[str, str],
     total_size_msg: str,
-    mkdir_commands: list[str],
-    mv_commands: list[str],
     template_path: Path | str = TEMPLATE_PATH,
     output_path: Path | str = OUTPUT_PATH,
 ) -> None:
@@ -25,7 +23,7 @@ def generate_download_script(
         template_path (Path | str, optional): Path to the template file. Defaults to TEMPLATE_PATH.
         output_path (Path | str, optional): Path to the output file. Defaults to OUTPUT_PATH.
     """
-    if not links:
+    if not url_to_dir_mapping:
         LOGGER.warning("No links to download.")
         return
 
@@ -39,14 +37,18 @@ def generate_download_script(
     with open(template_path) as f:
         template = f.read()
 
-    links_str = "\n".join([f'"{link}"' for link in links])
-    mkdir_commands_str = "\n".join(mkdir_commands)
-    mv_commands_str = "\n".join(mv_commands)
-    script = (
-        template.replace('    "<<links>>"', links_str)
-        .replace("<<size>>", total_size_msg)
-        .replace('"<<create_directories_command>>"', mkdir_commands_str)
-        .replace('"<<move_files_command>>"', mv_commands_str)
+    url_to_dir_mapping_str = "\n".join(
+        [
+            f'LINKS_TO_TARGETS["{url}"]="{dir}"'
+            for url, dir in url_to_dir_mapping.items()
+        ]
+    )
+    script = template.replace(
+        '"<<url_to_dir_mapping>>"',
+        url_to_dir_mapping_str,
+    ).replace(
+        "<<size>>",
+        total_size_msg,
     )
 
     with open(output_path, "w") as f:
