@@ -7,6 +7,7 @@
 export TIMEOUT_SECS=300
 export MAX_RETRIES=3
 export WAIT_SECS_BEFORE_RETRY=300
+export MAX_PARALLEL_DOWNLOADS=5
 export CACHE_FILE="downloaded_files_cache.txt"
 export DEBUG=false
 
@@ -86,7 +87,7 @@ download() {
         "${download_command[@]}" "$file"
         status=$?
         if [ ${status} -eq 0 ]; then
-            echo "Successfully downloaded $filename"
+            echo "--Successfully downloaded $filename"
 
             debug_log "Moving $filename to $target_dir"
             mv "$filename" "$target_dir"
@@ -112,7 +113,7 @@ export -f download
 
 # Function to limit the number of concurrent jobs
 limit_jobs() {
-    while [ "$(jobs | wc -l)" -ge 5 ]; do
+    while [ "$(jobs | wc -l)" -ge "${MAX_PARALLEL_DOWNLOADS}" ]; do
         sleep 1
     done
 }
