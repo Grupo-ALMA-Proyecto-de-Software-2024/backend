@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+
 LOGGER = logging.getLogger(__name__)
 
 SCRIPT_GENERATOR_DIR = Path(__file__).parent.resolve()
@@ -9,7 +10,7 @@ OUTPUT_PATH = SCRIPT_GENERATOR_DIR / "download_data.sh"
 
 
 def generate_download_script(
-    links: list[str],
+    url_to_dir_mapping: dict[str, str],
     total_size_msg: str,
     template_path: Path | str = TEMPLATE_PATH,
     output_path: Path | str = OUTPUT_PATH,
@@ -22,7 +23,7 @@ def generate_download_script(
         template_path (Path | str, optional): Path to the template file. Defaults to TEMPLATE_PATH.
         output_path (Path | str, optional): Path to the output file. Defaults to OUTPUT_PATH.
     """
-    if not links:
+    if not url_to_dir_mapping:
         LOGGER.warning("No links to download.")
         return
 
@@ -36,9 +37,18 @@ def generate_download_script(
     with open(template_path) as f:
         template = f.read()
 
-    links_str = "\n".join([f'"{link}"' for link in links])
-    script = template.replace('    "<<links>>"', links_str).replace(
-        "<<size>>", total_size_msg
+    url_to_dir_mapping_str = "\n".join(
+        [
+            f'LINKS_TO_TARGETS["{url}"]="{dir}"'
+            for url, dir in url_to_dir_mapping.items()
+        ]
+    )
+    script = template.replace(
+        '"<<url_to_dir_mapping>>"',
+        url_to_dir_mapping_str,
+    ).replace(
+        "<<size>>",
+        total_size_msg,
     )
 
     with open(output_path, "w") as f:

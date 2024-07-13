@@ -7,14 +7,14 @@
 export TIMEOUT_SECS=300
 export MAX_RETRIES=3
 export WAIT_SECS_BEFORE_RETRY=300
+export MAX_PARALLEL_DOWNLOADS=5
 export CACHE_FILE="downloaded_files_cache.txt"
 export DEBUG=false
 
 # Parameters
 TOTAL_SIZE="<<size>>"
-LIST=(
-    "<<links>>"
-)
+declare -A LINKS_TO_TARGETS
+"<<url_to_dir_mapping>>"
 
 # Initialize failed_downloads counter
 export failed_downloads=0
@@ -39,15 +39,6 @@ create_cache_file() {
 }
 export -f create_cache_file
 
-# Function to read cache
-read_cache() {
-    debug_log "Reading cache file: ${CACHE_FILE}"
-    if [ -f "${CACHE_FILE}" ]; then
-        cat "${CACHE_FILE}"
-    fi
-}
-export -f read_cache
-
 # Function to update cache
 update_cache() {
     local file=$1
@@ -57,9 +48,10 @@ update_cache() {
 export -f update_cache
 
 # Function to download a single file with retries
-dl() {
+download() {
     local file=$1
     local filename=$(basename "$file")
+    local target_dir="${LINKS_TO_TARGETS["$file"]}"
     local attempt_num=0
 
     debug_log "Checking if file $file is already downloaded"
@@ -95,7 +87,12 @@ dl() {
         "${download_command[@]}" "$file"
         status=$?
         if [ ${status} -eq 0 ]; then
-            echo "Successfully downloaded $filename"
+            echo "--Successfully downloaded $filename"
+
+            debug_log "Moving $filename to $target_dir"
+            mv "$filename" "$target_dir"
+
+            debug_log "Updating cache with $file"
             update_cache "$file"
             break
         else
@@ -112,32 +109,30 @@ dl() {
         fi
     done
 }
-export -f dl
+export -f download
 
-# Function to split files into long and short filenames
-split_files_list() {
-    export long_files=()
-    export ok_files=()
-    for nextfile in "${LIST[@]}"; do
-        local length=${#nextfile}
-        if [[ $length -ge 251 ]]; then
-            long_files+=("$nextfile")
-        else
-            ok_files+=("$nextfile")
-        fi
+# Function to limit the number of concurrent jobs
+limit_jobs() {
+    while [ "$(jobs | wc -l)" -ge "${MAX_PARALLEL_DOWNLOADS}" ]; do
+        sleep 1
     done
-    debug_log "Split files into ok_files: ${ok_files[@]} and long_files: ${long_files[@]}"
 }
-export -f split_files_list
+export -f limit_jobs
 
 # Function to download files
 download_files() {
-    split_files_list
     debug_log "Downloading files in parallel"
-    printf "%s\n" "${ok_files[@]}" | xargs -P5 -n1 bash -c 'dl "$@"' _
-    for next_file in "${long_files[@]}"; do
-        dl "${next_file}"
+
+    # Download files in parallel with job control
+    for nextfile in "${!LINKS_TO_TARGETS[@]}"; do
+        limit_jobs
+        (
+            download "$nextfile"
+        ) &
     done
+
+    # Wait for all background jobs to complete
+    wait
 }
 export -f download_files
 
@@ -151,11 +146,19 @@ check_download_tool() {
 }
 export -f check_download_tool
 
+# Function to create directories following the region/disk/band/molecule structure
+create_directories() {
+    for dir in "${LINKS_TO_TARGETS[@]}"; do
+        mkdir -p "$dir"
+    done
+}
+export -f create_directories
+
 # Function to print download info
 print_download_info() {
     echo "Downloading the following files in up to 5 parallel streams. Total size is ${TOTAL_SIZE}."
-    for file in "${LIST[@]}"; do
-        echo "$file"
+    for url in "${!LINKS_TO_TARGETS[@]}"; do
+        echo "$url"
     done
     echo "In case of errors each download will be automatically resumed up to 3 times after a 5 minute delay."
     echo "To manually resume interrupted downloads just re-run the script."
@@ -166,6 +169,11 @@ export -f print_download_info
 # Main script execution
 check_download_tool
 create_cache_file
+
+echo "Creating directories..."
+create_directories
+
 print_download_info
 download_files
-echo "Done."
+
+echo "Download script execution completed."
