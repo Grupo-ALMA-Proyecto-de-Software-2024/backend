@@ -70,8 +70,6 @@ def generate_download_script_service(links: list[str]) -> str:
         for data in data_items
     }
 
-    print(links_to_targets)
-
     output_script_path = SCRIPTS_DIR / generate_unique_filename()
     generate_download_script(
         url_to_dir_mapping=links_to_targets,
