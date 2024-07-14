@@ -12,7 +12,7 @@ env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(ENV_FILE)
 
 
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
