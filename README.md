@@ -39,7 +39,3 @@ La documentación de la API se encuentra está hecha con swagger y se puede acce
 ### BackOffice
 
 El backoffice está hecho con Django Admin y se puede acceder a través de la ruta `/admin`. (Ej: `http://localhost:8000/admin`). Para más información, ver la documentación del [BackOffice](./docs/BACKOFFICE.md).
-
-
-
-  
