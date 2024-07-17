@@ -52,4 +52,5 @@ def generate_download_script(
     )
 
     with open(output_path, "w") as f:
+        print(f"Writing script to {output_path}")
         f.write(script)
