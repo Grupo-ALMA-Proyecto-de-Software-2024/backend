@@ -26,6 +26,7 @@ class DownloadScriptGeneratorView(APIView):
     def post(self, request) -> Response:
         try:
             links = request.data.get("links", [])
+            print(f"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA {links}")
             if not links:
                 return Response(
                     {"error": "Links are required."}, status=status.HTTP_400_BAD_REQUEST
