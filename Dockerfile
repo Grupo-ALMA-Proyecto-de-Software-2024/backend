@@ -1,47 +1,26 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11-slim AS builder
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Set work directory
-WORKDIR /app
-
-# Install system dependencies and Poetry in one step to minimize layers
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc libpq-dev && \
-    pip install --upgrade pip && \
-    pip install poetry && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy the project files into the container
-COPY . /app
-
-# Install project dependencies
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-dev --no-interaction --no-ansi
-
-# Collect static files
-RUN poetry run python manage.py collectstatic --noinput
-
-# Use a smaller base image for the runtime environment
 FROM python:3.11-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Set work directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy installed dependencies and project files from the builder stage
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=builder /app /app
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-# Make port 8000 available to the world outside this container
-EXPOSE 8000
+# Install system dependencies
+RUN apt-get update && apt-get install -y make curl
 
-# Run the application
-CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "your_django_project.wsgi:application"]
+# Install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 - && \
+    mv /root/.local/bin/poetry /usr/local/bin/
+
+# Disable Poetry's virtual environment creation
+# ENV POETRY_VIRTUALENVS_CREATE=false
+
+# Install project dependencies
+RUN poetry install
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
