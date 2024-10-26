@@ -43,3 +43,14 @@ El backoffice está hecho con Django Admin y se puede acceder a través de la ru
 ### Modelos de Datos
 
 La documentación de los modelos de datos se encuentra en el archivo [MODELOS_DE_DATOS.md](./docs/MODELOS_DE_DATOS.md).
+
+## Contribuidores
+
+Este proyecto fue desarrollado como parte del curso Proyecto de Software de la Facultad de Ciencias Físicas y Matemáticas de la Universidad de Chile. Los siguientes estudiantes contribuyeron al proyecto:
+
+- [Diego Carmona](https://github.com/Diego-Carmona)
+- [Luciano Providel](https://github.com/Lu-desu)
+- [Nicolás Cárcamo](https://github.com/nicolascarcamo)
+- [Pablo Skewes](https://github.com/pabloskewes)
+- [Bastián Vera](https://github.com/bverab)
+- [Franz Widerstrom](https://github.com/Franzo1)
