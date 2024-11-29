@@ -35,32 +35,27 @@ class DataSerializer(serializers.ModelSerializer):
 
 
 class MoleculeSerializer(serializers.ModelSerializer):
-    data = DataSerializer(many=True, read_only=True)
-
     class Meta:
         model = models.Molecule
-        fields = ["name", "creation_date", "data"]
+        fields = ["name", "creation_date"]
 
 
 class BandSerializer(serializers.ModelSerializer):
-    molecules = MoleculeSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Band
-        fields = ["name", "creation_date", "molecules"]
+        fields = ["name", "creation_date"]
 
 
 class DiskSerializer(serializers.ModelSerializer):
-    bands = BandSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Disk
-        fields = ["name", "creation_date", "bands", "features"]
+        fields = ["name", "creation_date", "features"]
 
 
 class RegionSerializer(serializers.ModelSerializer):
-    disks = DiskSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Region
-        fields = ["name", "creation_date", "disks", "description"]
+        fields = ["name", "creation_date", "description"]
