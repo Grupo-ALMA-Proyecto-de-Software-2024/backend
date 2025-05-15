@@ -1,6 +1,7 @@
 import logging
 
 import pandas as pd
+import numpy as np
 from django.core.files.uploadedfile import UploadedFile
 from django.core.exceptions import ValidationError
 
@@ -45,6 +46,10 @@ def load_csv_file(datafile: UploadedFile) -> pd.DataFrame:
         for column in data.columns:
             if data[column].dtype == "object":
                 data[column] = data[column].str.strip()
+
+        # Replace NaN values in link_imagen with empty string
+        if "link_imagen" in data.columns:
+            data["link_imagen"] = data["link_imagen"].replace({np.nan: ""})
 
         data = data.astype(EXPECTED_COLUMN_TYPES)
 
