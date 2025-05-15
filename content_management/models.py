@@ -12,16 +12,16 @@ class CarouselImage(models.Model):
 
 
 class Publication(models.Model):
-    title = models.CharField(max_length=100)
-    authors = models.CharField(max_length=100)
-    full_authors = models.CharField(max_length=100)
+    title = models.CharField(max_length=1000)
+    authors = models.CharField(max_length=1000)
+    full_authors = models.CharField(max_length=5000)
     journal_info = models.CharField(max_length=100)
     summary = models.TextField()
     image = models.ImageField(upload_to="publications/")
-    pdf_link = models.CharField(max_length=100)
-    bibtex_link = models.CharField(max_length=100)
-    data_link = models.CharField(max_length=100)
-    sao_nasa_link = models.CharField(max_length=100)
+    pdf_link = models.CharField(max_length=1000)
+    bibtex_link = models.CharField(max_length=1000)
+    data_link = models.CharField(max_length=1000)
+    sao_nasa_link = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.title
