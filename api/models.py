@@ -108,6 +108,9 @@ class Data(BaseDataModel):
     image_link = models.TextField(blank=True, null=True, verbose_name="Image Link")
     size_in_mb = models.FloatField(blank=True, null=True, verbose_name="Size (MB)")
 
+    def __str__(self):
+        return f"{self.filepath} ({self.size_in_mb} MB)"
+
     class Meta:
         verbose_name_plural = "Data"
 
