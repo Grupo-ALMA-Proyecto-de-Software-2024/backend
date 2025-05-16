@@ -53,3 +53,14 @@ class MoleculeAdmin(admin.ModelAdmin):
 
 class DataAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list.html"
+    list_display = ("name", "region", "disk", "band", "molecule", "size_in_mb")
+    list_filter = ("region", "disk", "band", "molecule")
+    search_fields = (
+        "name",
+        "filepath",
+        "region__name",
+        "disk__name",
+        "band__name",
+        "molecule__name",
+    )
+    list_per_page = 50
