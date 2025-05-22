@@ -16,32 +16,22 @@ jobs:
       DEBUG: "True"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv y configurar Python
+        uses: astral-sh/setup-uv@v6
         with:
-          fetch-depth: 0
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: |
+            pyproject.toml
+            uv.lock
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.11
+      - name: Instalar dependencias
+        run: uv sync --all-extras --dev
 
-      - name: Cache Poetry virtualenv
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-
-      - name: Install dependencies
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-          poetry install
-
-      - name: Code quality checks
+      - name: Verificar calidad del código
         run: make quality-check
 
-      - name: Run tests
-        run: |
-          make test
+      - name: Ejecutar pruebas
+        run: make test

@@ -1,36 +1,25 @@
 # Use an official Python runtime as a parent image
 FROM python:3.11-slim
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
-
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install system dependencies and uv
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    make \
-    && rm -rf /var/lib/apt/lists/*
+    apt-get install -y curl make gcc && \
+    rm -rf /var/lib/apt/lists/* && \
+    curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Copy the entire application 
-COPY . .
+# Optional: Add uv to PATH explicitly (if needed)
+ENV PATH="/root/.cargo/bin:$PATH"
 
-# Install requirements directly
-RUN pip install django==5.0.3 \
-    djangorestframework==3.15.1 \
-    drf-spectacular==0.27.2 \
-    pillow==10.3.0 \
-    django-cors-headers==4.3.1 \
-    markdown==3.6 \
-    pandas==2.2.2 \
-    python-dotenv==1.0.1 \
-    django-environ==0.11.2 \
-    gunicorn==22.0.0
+# Pre-install dependencies using uv
+RUN uv sync --all-extras --dev
 
-EXPOSE 8000
-
-# Use a direct command instead of an entrypoint script
-CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn alma.wsgi:application --bind 0.0.0.0:8000 --workers 3"]
-
+# Copy and set up the entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
