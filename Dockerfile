@@ -1,25 +1,29 @@
-# Use an official Python runtime as a parent image
-FROM python:3.11-slim
+# Start from a pre-built Python image with uv
+FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
 
-# Set the working directory in the container
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    UV_SYSTEM_PYTHON=1
+
+# Set the working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
-
-# Install system dependencies and uv
+# Install system dependencies
 RUN apt-get update && \
-    apt-get install -y curl make gcc && \
-    rm -rf /var/lib/apt/lists/* && \
-    curl -LsSf https://astral.sh/uv/install.sh | sh
+    apt-get install -y --no-install-recommends \
+    make \
+    && rm -rf /var/lib/apt/lists/*
 
-# Optional: Add uv to PATH explicitly (if needed)
-ENV PATH="/root/.cargo/bin:$PATH"
+# Copy the entire application
+COPY . .
 
-# Pre-install dependencies using uv
-RUN uv sync --all-extras --dev
+# Install dependencies with uv (using system Python for containers)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system -e .
 
-# Copy and set up the entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+# Expose port
+EXPOSE 8000
+
+# Run the application
+CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn alma.wsgi:application --bind 0.0.0.0:8000 --workers 3"]
