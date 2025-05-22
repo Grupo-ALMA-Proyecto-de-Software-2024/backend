@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "Backend de repositorio de datos de ALMA"
 authors = ["Pablo <112183476+pabloscopeo@users.noreply.github.com>"]
 readme = "README.md"
-package-mode = false
 
 include = ["alma", "api", "content_management", "manage.py"]
 

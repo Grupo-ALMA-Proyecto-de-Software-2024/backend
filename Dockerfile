@@ -3,9 +3,7 @@ FROM python:3.11-slim
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_VERSION=1.7.1
+    PYTHONDONTWRITEBYTECODE=1
 
 # Set the working directory in the container
 WORKDIR /app
@@ -13,30 +11,26 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    curl \
     make \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 - && \
-    mv /root/.local/bin/poetry /usr/local/bin/
-
-# Copy the entire application first
+# Copy the entire application 
 COPY . .
 
-# Install dependencies
-RUN poetry install --no-root --no-cache
+# Install requirements directly
+RUN pip install django==5.0.3 \
+    djangorestframework==3.15.1 \
+    drf-spectacular==0.27.2 \
+    pillow==10.3.0 \
+    django-cors-headers==4.3.1 \
+    markdown==3.6 \
+    pandas==2.2.2 \
+    python-dotenv==1.0.1 \
+    django-environ==0.11.2 \
+    gunicorn==22.0.0
 
-# Create a non-root user
-RUN adduser --disabled-password --gecos "" appuser && \
-    chown -R appuser:appuser /app
+EXPOSE 8000
 
-# Switch to non-root user
-USER appuser
-
-# Make sure entrypoint is executable
-RUN chmod +x /app/entrypoint.sh
-
-# Set the entrypoint
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Use a direct command instead of an entrypoint script
+CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn alma.wsgi:application --bind 0.0.0.0:8000 --workers 3"]
 
