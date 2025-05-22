@@ -7,7 +7,7 @@ This is the backend for the ALMA data repository.
 ### Prerequisitos
 
 - Python 3.11
-- [Poetry](https://python-poetry.org/docs/#installation)
+- [uv](https://docs.astral.sh/uv/)
 
 ### Instalación
 

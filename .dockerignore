@@ -15,10 +15,6 @@ db.sqlite3-journal
 env/
 venv/
 
-# Poetry
-poetry.lock
-.poetry-env
-
 # Static files
 /static/
 

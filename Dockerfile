@@ -1,32 +1,29 @@
-# Use an official Python runtime as a parent image
-FROM python:3.11-slim
+# Start from a pre-built Python image with uv
+FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
 
-# Set the working directory in the container
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    UV_SYSTEM_PYTHON=1
+
+# Set the working directory
 WORKDIR /app
-
-# Copy the current directory contents into the container at /app
-COPY . /app
 
 # Install system dependencies
 RUN apt-get update && \
-    apt-get install -y curl make && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+    make \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 - && mv /root/.local/bin/poetry /usr/local/bin/
-RUN poetry --version
+# Copy the entire application
+COPY . .
 
-# Disable Poetry's virtual environment creation
-ENV POETRY_VIRTUALENVS_CREATE=false
+# Install dependencies with uv (using system Python for containers)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system -e .
 
-# RUN poetry config virtualenvs.create true && \
-#     poetry config virtualenvs.in-project true && \
-#     poetry config virtualenvs.path "/app/.venv"
+# Expose port
+EXPOSE 8000
 
-# Install project dependencies
-RUN poetry install --no-root --no-cache
-
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-
+# Run the application
+CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn alma.wsgi:application --bind 0.0.0.0:8000 --workers 3"]
