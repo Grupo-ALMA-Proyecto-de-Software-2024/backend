@@ -14,7 +14,7 @@ This is the backend for the ALMA data repository.
 Para instalar las dependencias del proyecto, ejecutar el siguiente comando:
 
 ```bash
-poetry install
+uv sync
 ```
 
 ### Uso
