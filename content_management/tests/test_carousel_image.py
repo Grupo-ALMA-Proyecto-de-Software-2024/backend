@@ -33,7 +33,7 @@ class CarouselImageViewTest(TestCase):
         self.image_path.unlink()
 
     def test_carousel_image_list(self):
-        response = self.client.get(reverse("carousel"))
+        response = self.client.get(reverse("backend:carousel"))
         response_data = response.data["carousel_images"]
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response_data), 1)

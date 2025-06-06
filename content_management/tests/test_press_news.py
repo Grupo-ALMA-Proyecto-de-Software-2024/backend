@@ -20,7 +20,7 @@ class PressNewsViewTest(TestCase):
         )
 
     def test_press_news_list(self):
-        response = self.client.get(reverse("press-news"))
+        response = self.client.get(reverse("backend:press-news"))
         response_data = response.data["press_news"]
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response_data), 2)

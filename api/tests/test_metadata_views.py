@@ -30,7 +30,7 @@ class ViewNoQueryParamsTest(TestCase):
         )
 
     def test_region_view(self):
-        url = reverse("regions")
+        url = reverse("backend:regions")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -39,7 +39,7 @@ class ViewNoQueryParamsTest(TestCase):
         self.assertEqual(response.data["regions"][0]["name"], "Region1")
 
     def test_disk_view(self):
-        url = reverse("disks")
+        url = reverse("backend:disks")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -48,7 +48,7 @@ class ViewNoQueryParamsTest(TestCase):
         self.assertEqual(response.data["disks"][0]["name"], "Disk1")
 
     def test_band_view(self):
-        url = reverse("bands")
+        url = reverse("backend:bands")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -57,7 +57,7 @@ class ViewNoQueryParamsTest(TestCase):
         self.assertEqual(response.data["bands"][0]["name"], "Band1")
 
     def test_molecule_view(self):
-        url = reverse("molecules")
+        url = reverse("backend:molecules")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -66,7 +66,7 @@ class ViewNoQueryParamsTest(TestCase):
         self.assertEqual(response.data["molecules"][0]["name"], "Molecule1")
 
     def test_data_view(self):
-        url = reverse("data")
+        url = reverse("backend:data")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -115,7 +115,7 @@ class ViewTestWithQueryParams(TestCase):
         )
 
     def test_region_view_with_filter(self):
-        url = reverse("regions") + "?region=Region1"
+        url = reverse("backend:regions") + "?region=Region1"
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -124,7 +124,7 @@ class ViewTestWithQueryParams(TestCase):
         self.assertEqual(response.data["regions"][0]["name"], "Region1")
 
     def test_disk_view_with_filter(self):
-        url = reverse("disks") + "?disk=Disk1&region=Region1"
+        url = reverse("backend:disks") + "?disk=Disk1&region=Region1"
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -133,7 +133,7 @@ class ViewTestWithQueryParams(TestCase):
         self.assertEqual(response.data["disks"][0]["name"], "Disk1")
 
     def test_band_view_with_filter(self):
-        url = reverse("bands") + "?band=Band1&disk=Disk1&region=Region1"
+        url = reverse("backend:bands") + "?band=Band1&disk=Disk1&region=Region1"
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -143,7 +143,7 @@ class ViewTestWithQueryParams(TestCase):
 
     def test_molecule_view_with_filter(self):
         url = (
-            reverse("molecules")
+            reverse("backend:molecules")
             + "?molecule=Molecule1&band=Band1&disk=Disk1&region=Region1"
         )
         response = self.client.get(url)
@@ -155,7 +155,7 @@ class ViewTestWithQueryParams(TestCase):
 
     def test_data_view_with_filter(self):
         url = (
-            reverse("data")
+            reverse("backend:data")
             + "?data=Data1&molecule=Molecule1&band=Band1&disk=Disk1&region=Region1"
         )
         response = self.client.get(url)
@@ -211,7 +211,7 @@ class ViewTestWithMultipleFilters(TestCase):
         )
 
     def test_region_view_with_multiple_filters(self):
-        url = reverse("regions") + "?region=Region1&region=Region2"
+        url = reverse("backend:regions") + "?region=Region1&region=Region2"
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -221,7 +221,10 @@ class ViewTestWithMultipleFilters(TestCase):
         self.assertEqual(response.data["regions"][1]["name"], "Region2")
 
     def test_disk_view_with_multiple_filters(self):
-        url = reverse("disks") + "?disk=Disk1&disk=Disk2&region=Region1&region=Region2"
+        url = (
+            reverse("backend:disks")
+            + "?disk=Disk1&disk=Disk2&region=Region1&region=Region2"
+        )
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -232,7 +235,7 @@ class ViewTestWithMultipleFilters(TestCase):
 
     def test_band_view_with_multiple_filters(self):
         url = (
-            reverse("bands")
+            reverse("backend:bands")
             + "?band=Band1&band=Band2&disk=Disk1&disk=Disk2&region=Region1&region=Region2"
         )
         response = self.client.get(url)
@@ -245,7 +248,7 @@ class ViewTestWithMultipleFilters(TestCase):
 
     def test_molecule_view_with_multiple_filters(self):
         url = (
-            reverse("molecules")
+            reverse("backend:molecules")
             + "?molecule=Molecule1&molecule=Molecule2&band=Band1&band=Band2"
             + "&disk=Disk1&disk=Disk2&region=Region1&region=Region2"
         )
@@ -259,7 +262,7 @@ class ViewTestWithMultipleFilters(TestCase):
 
     def test_data_view_with_multiple_filters(self):
         url = (
-            reverse("data")
+            reverse("backend:data")
             + "?data=Data1&data=Data2&molecule=Molecule1&molecule=Molecule2"
             + "&band=Band1&band=Band2&disk=Disk1&disk=Disk2&region=Region1&region=Region2"
         )
@@ -274,7 +277,7 @@ class ViewTestWithMultipleFilters(TestCase):
         self.assertEqual(response.data["data"][1]["size_in_mb"], 2.0)
 
     def test_region_view_with_filter_and_a_non_existent_region(self):
-        url = reverse("regions") + "?region=Region1&region=Region3"
+        url = reverse("backend:regions") + "?region=Region1&region=Region3"
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -283,7 +286,7 @@ class ViewTestWithMultipleFilters(TestCase):
         self.assertEqual(response.data["regions"][0]["name"], "Region1")
 
     def test_disk_view_with_filter_and_a_non_existent_disk(self):
-        url = reverse("disks") + "?disk=Disk1&disk=Disk3&region=Region1"
+        url = reverse("backend:disks") + "?disk=Disk1&disk=Disk3&region=Region1"
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -292,7 +295,10 @@ class ViewTestWithMultipleFilters(TestCase):
         self.assertEqual(response.data["disks"][0]["name"], "Disk1")
 
     def test_band_view_with_filter_and_a_non_existent_band(self):
-        url = reverse("bands") + "?band=Band1&band=Band3&disk=Disk1&region=Region1"
+        url = (
+            reverse("backend:bands")
+            + "?band=Band1&band=Band3&disk=Disk1&region=Region1"
+        )
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -302,7 +308,7 @@ class ViewTestWithMultipleFilters(TestCase):
 
     def test_molecule_view_with_filter_and_a_non_existent_molecule(self):
         url = (
-            reverse("molecules")
+            reverse("backend:molecules")
             + "?molecule=Molecule1&molecule=Molecule3&band=Band1&disk=Disk1&region=Region1"
         )
         response = self.client.get(url)
@@ -314,7 +320,7 @@ class ViewTestWithMultipleFilters(TestCase):
 
     def test_data_view_with_filter_and_a_non_existent_data(self):
         url = (
-            reverse("data")
+            reverse("backend:data")
             + "?data=Data1&data=Data3&molecule=Molecule1&band=Band1&disk=Disk1&region=Region1"
         )
         response = self.client.get(url)
@@ -366,7 +372,7 @@ class ViewTestWithNoResults(TestCase):
         )
 
     def test_region_view_no_results(self):
-        url = reverse("regions") + "?region=Region3"
+        url = reverse("backend:regions") + "?region=Region3"
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -374,7 +380,7 @@ class ViewTestWithNoResults(TestCase):
         self.assertEqual(len(response.data["regions"]), 0)
 
     def test_disk_view_no_results(self):
-        url = reverse("disks") + "?disk=Disk3&region=Region3"
+        url = reverse("backend:disks") + "?disk=Disk3&region=Region3"
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -382,7 +388,7 @@ class ViewTestWithNoResults(TestCase):
         self.assertEqual(len(response.data["disks"]), 0)
 
     def test_band_view_no_results(self):
-        url = reverse("bands") + "?band=Band3&disk=Disk3&region=Region3"
+        url = reverse("backend:bands") + "?band=Band3&disk=Disk3&region=Region3"
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -391,7 +397,7 @@ class ViewTestWithNoResults(TestCase):
 
     def test_molecule_view_no_results(self):
         url = (
-            reverse("molecules")
+            reverse("backend:molecules")
             + "?molecule=Molecule3&band=Band3&disk=Disk3&region=Region3"
         )
         response = self.client.get(url)
@@ -402,7 +408,7 @@ class ViewTestWithNoResults(TestCase):
 
     def test_data_view_no_results(self):
         url = (
-            reverse("data")
+            reverse("backend:data")
             + "?data=Data3&molecule=Molecule3&band=Band3&disk=Disk3&region=Region3"
         )
         response = self.client.get(url)
@@ -428,7 +434,7 @@ class ViewTestDescriptionFields(TestCase):
         self.disk2.regions.add(self.region)
 
     def test_region_view_with_description(self):
-        url = reverse("regions")
+        url = reverse("backend:regions")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -438,7 +444,7 @@ class ViewTestDescriptionFields(TestCase):
         self.assertEqual(response.data["regions"][0]["description"], "Description1")
 
     def test_disk_view_with_features(self):
-        url = reverse("disks")
+        url = reverse("backend:disks")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
