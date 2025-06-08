@@ -40,7 +40,7 @@ class PublicationViewTest(TestCase):
         self.image_path.unlink()
 
     def test_publication_list(self):
-        response = self.client.get(reverse("backend:publications"))
+        response = self.client.get(reverse("publications"))
         response_data = response.data["publications"]
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response_data), 1)
