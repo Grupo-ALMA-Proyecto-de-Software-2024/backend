@@ -7,9 +7,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(DEBUG=(bool, False))
 
-# In a containerized environment, environment variables are loaded automatically.
-# The read_env() call is only for local development outside of Docker.
-# environ.Env.read_env(BASE_DIR / ".env")
+
+environ.Env.read_env(BASE_DIR / ".env")
 
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
