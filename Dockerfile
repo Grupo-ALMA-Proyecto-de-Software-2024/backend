@@ -4,26 +4,33 @@ FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    UV_SYSTEM_PYTHON=1
+    UV_SYSTEM_PYTHON=1 \
+    APP_HOME=/app
 
 # Set the working directory
-WORKDIR /app
+WORKDIR $APP_HOME
 
-# Install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    make \
-    && rm -rf /var/lib/apt/lists/*
+# Create a non-root user
+RUN addgroup --system app && adduser --system --group app
+
+# Create directories for static and media files
+RUN mkdir $APP_HOME/static && mkdir $APP_HOME/media && mkdir $APP_HOME/db
 
 # Copy the entire application
 COPY . .
 
-# Install dependencies with uv (using system Python for containers)
+# Install dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system -e .
+
+# Change ownership of the directories
+RUN chown -R app:app $APP_HOME
+
+# Switch to the non-root user
+USER app
 
 # Expose port
 EXPOSE 8000
 
-# Run the application
-CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn alma.wsgi:application --bind 0.0.0.0:8000 --workers 3"]
+# The command is specified in the docker-compose.yml
+# CMD ["gunicorn", "alma.wsgi:application", "--bind", "0.0.0.0:8000"]
