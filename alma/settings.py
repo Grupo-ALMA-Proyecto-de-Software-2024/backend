@@ -77,13 +77,10 @@ WSGI_APPLICATION = "alma.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DB_FOLDER = BASE_DIR / "db"
-DB_FOLDER.mkdir(parents=True, exist_ok=True)
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": DB_FOLDER / "db.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
