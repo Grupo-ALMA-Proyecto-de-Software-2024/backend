@@ -32,15 +32,17 @@ jobs:
           ssh -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" << 'EOF'
             set -e
 
-            echo "Navigating to backend repository: $PROJECT_ROOT_ON_SERVER/backend"
-            cd "$PROJECT_ROOT_ON_SERVER/backend" || { echo "ERROR: No se pudo navegar a $PROJECT_ROOT_ON_SERVER/backend"; exit 1; }
+            export PROJECT_ROOT_ON_SERVER="${PROJECT_ROOT_ON_SERVER}" 
+
+            echo "Navigating to backend repository: ${PROJECT_ROOT_ON_SERVER}/backend"
+            cd "${PROJECT_ROOT_ON_SERVER}/backend" || { echo "ERROR: No se pudo navegar a ${PROJECT_ROOT_ON_SERVER}/backend"; exit 1; }
             echo "Current directory: $(pwd)"
 
             echo "Pulling latest backend code..."
             git pull || { echo "ERROR: Falló git pull en el backend"; exit 1; }
 
-            echo "Navigating back to docker-compose root: $PROJECT_ROOT_ON_SERVER"
-            cd "$PROJECT_ROOT_ON_SERVER" || { echo "ERROR: No se pudo navegar a $PROJECT_ROOT_ON_SERVER"; exit 1; }
+            echo "Navigating back to docker-compose root: ${PROJECT_ROOT_ON_SERVER}"
+            cd "${PROJECT_ROOT_ON_SERVER}" || { echo "ERROR: No se pudo navegar a ${PROJECT_ROOT_ON_SERVER}"; exit 1; }
             echo "Current directory: $(pwd)"
 
             echo "Building Django image..."
