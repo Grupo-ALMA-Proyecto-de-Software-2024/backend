@@ -32,7 +32,7 @@ jobs:
           echo "PROJECT_ROOT_ON_SERVER: $PROJECT_ROOT_ON_SERVER"
           echo "------------------------------------"
           echo "Connecting to $SSH_USER@$SSH_HOST:$SSH_PORT"
-          ssh -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" << 'EOF'
+          ssh -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" << EOF
             set -e
 
             echo "Navigating to backend repository: $PROJECT_ROOT_ON_SERVER/backend"
