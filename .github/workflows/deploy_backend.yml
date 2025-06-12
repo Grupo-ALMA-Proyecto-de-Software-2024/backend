@@ -25,6 +25,12 @@ jobs:
           SSH_PORT: ${{ secrets.SSH_PORT }}
           PROJECT_ROOT_ON_SERVER: ${{ secrets.PROJECT_ROOT_ON_SERVER }}
         run: |
+          echo "--- Workflow environment variables ---"
+          echo "SSH_USER: $SSH_USER"
+          echo "SSH_HOST: $SSH_HOST"
+          echo "SSH_PORT: $SSH_PORT"
+          echo "PROJECT_ROOT_ON_SERVER: $PROJECT_ROOT_ON_SERVER"
+          echo "------------------------------------"
           echo "Connecting to $SSH_USER@$SSH_HOST:$SSH_PORT"
           ssh -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" << 'EOF'
             set -e
