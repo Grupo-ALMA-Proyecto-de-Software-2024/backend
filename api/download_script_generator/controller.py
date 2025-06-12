@@ -26,6 +26,7 @@ class DownloadScriptGeneratorView(APIView):
     def post(self, request) -> Response:
         try:
             links = request.data.get("links", [])
+            use_https = request.data.get("use_https", False)
             if not links:
                 return Response(
                     {"error": "Links are required."}, status=status.HTTP_400_BAD_REQUEST
@@ -35,6 +36,8 @@ class DownloadScriptGeneratorView(APIView):
             absolute_script_url = request.build_absolute_uri(
                 f"{settings.MEDIA_URL}{script_url}"
             )
+            if use_https:
+                absolute_script_url = absolute_script_url.replace("http://", "https://")
             return Response(
                 {"script_url": absolute_script_url}, status=status.HTTP_200_OK
             )
