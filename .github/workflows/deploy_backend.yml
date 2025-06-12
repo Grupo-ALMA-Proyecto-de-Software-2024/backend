@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "**"
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -25,30 +26,34 @@ jobs:
           SSH_PORT: ${{ secrets.SSH_PORT }}
           PROJECT_ROOT_ON_SERVER: ${{ secrets.PROJECT_ROOT_ON_SERVER }}
         run: |
+          set -e
+
           echo "Connecting to $SSH_USER@$SSH_HOST:$SSH_PORT"
           ssh -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" << 'EOF'
             set -e
 
             echo "Navigating to backend repository: $PROJECT_ROOT_ON_SERVER/backend"
-            cd "$PROJECT_ROOT_ON_SERVER/backend"
+            cd "$PROJECT_ROOT_ON_SERVER/backend" || { echo "ERROR: No se pudo navegar a $PROJECT_ROOT_ON_SERVER/backend"; exit 1; }
+            echo "Current directory: $(pwd)"
 
             echo "Pulling latest backend code..."
-            git pull
+            git pull || { echo "ERROR: Falló git pull en el backend"; exit 1; }
 
             echo "Navigating back to docker-compose root: $PROJECT_ROOT_ON_SERVER"
-            cd "$PROJECT_ROOT_ON_SERVER"
+            cd "$PROJECT_ROOT_ON_SERVER" || { echo "ERROR: No se pudo navegar a $PROJECT_ROOT_ON_SERVER"; exit 1; }
+            echo "Current directory: $(pwd)"
 
             echo "Building Django image..."
-            docker compose build django
+            docker compose build django || { echo "ERROR: Falló la construcción de la imagen de Django"; exit 1; }
 
             echo "Restarting Django service..."
-            docker compose up -d django
+            docker compose up -d django || { echo "ERROR: Falló el reinicio del servicio de Django"; exit 1; }
 
             echo "Running Django migrations..."
-            docker compose exec django python manage.py migrate --noinput
+            docker compose exec django python manage.py migrate --noinput || { echo "ERROR: Fallaron las migraciones de Django"; exit 1; }
 
             echo "Collecting Django static files..."
-            docker compose exec django python manage.py collectstatic --noinput
+            docker compose exec django python manage.py collectstatic --noinput || { echo "ERROR: Falló la recolección de archivos estáticos de Django"; exit 1; }
 
             echo "Django deployment complete."
           EOF
