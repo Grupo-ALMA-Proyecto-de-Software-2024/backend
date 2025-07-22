@@ -49,7 +49,7 @@ jobs:
             docker compose build django
 
             echo "Restarting Django service..."
-            docker compose up -d django
+            docker compose up -d --force-recreate django
 
             echo "Running Django migrations..."
             docker compose exec django python manage.py migrate --noinput
